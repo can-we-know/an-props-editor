@@ -19,9 +19,11 @@ StringSetterState
 > {
   static displayName = 'StringSetter';
 
-  onChange = (e) => {
+  onChange = (e: any) => {
     const { onChange } = this.props;
-    onChange && onChange(e.target.value);
+    if (onChange) {
+      onChange(e.target.value);
+    }
   };
 
   render() {
