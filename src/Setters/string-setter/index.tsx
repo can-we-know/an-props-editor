@@ -33,7 +33,6 @@ StringSetterState
     const valueStr = (value && value.type === JS_EXPRESSION) ? defaultValue : val;
     return (
       <Input
-        className="domino-setter-string"
         value={valueStr}
         defaultValue={defaultValue}
         placeholder={placeholder || ''}
