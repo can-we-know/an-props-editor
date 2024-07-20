@@ -1,17 +1,16 @@
-import { Input } from 'antd';
+import { DatePicker } from 'antd';
+import type { Dayjs } from 'dayjs';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface StringSetterProps {
+interface DateSetterProps {
   value: any;
-  defaultValue: string;
+  defaultValue: Dayjs;
   placeholder?: string;
-  onChange: (val: string) => void;
+  onChange: (val: Dayjs) => void;
 }
 
-const StringSetter: React.FC<StringSetterProps> = (
-  props: StringSetterProps,
-) => {
+const DateSetter: React.FC<DateSetterProps> = (props: DateSetterProps) => {
   const { placeholder, value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
   // 如果有变量绑定，则展示默认值
@@ -20,12 +19,12 @@ const StringSetter: React.FC<StringSetterProps> = (
   const onChange = (e: any) => {
     const { onChange } = props;
     if (onChange) {
-      onChange(e.target.value);
+      onChange(e);
     }
   };
 
   return (
-    <Input
+    <DatePicker
       value={valueStr}
       defaultValue={defaultValue}
       placeholder={placeholder || ''}
@@ -34,6 +33,6 @@ const StringSetter: React.FC<StringSetterProps> = (
   );
 };
 
-StringSetter.displayName = 'StringSetter';
+DateSetter.displayName = 'DateSetter';
 
-export default StringSetter;
+export default DateSetter;

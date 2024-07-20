@@ -1,16 +1,14 @@
-import { InputNumber } from 'antd';
+import { Switch } from 'antd';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface NumberSetterProps {
+interface BoolSetterProps {
   value: any;
-  defaultValue: number;
-  onChange: (val: number) => void;
+  defaultValue: boolean;
+  onChange: (val: boolean) => void;
 }
 
-const NumberSetter: React.FC<NumberSetterProps> = (
-  props: NumberSetterProps,
-) => {
+const BoolSetter: React.FC<BoolSetterProps> = (props: BoolSetterProps) => {
   const { value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
   // 如果有变量绑定，则展示默认值
@@ -24,14 +22,14 @@ const NumberSetter: React.FC<NumberSetterProps> = (
   };
 
   return (
-    <InputNumber
-      value={valueStr}
-      defaultValue={defaultValue}
+    <Switch
+      checked={valueStr}
+      defaultChecked={defaultValue}
       onChange={onChange}
     />
   );
 };
 
-NumberSetter.displayName = 'NumberSetter';
+BoolSetter.displayName = 'BoolSetter';
 
-export default NumberSetter;
+export default BoolSetter;

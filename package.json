@@ -46,7 +46,9 @@
     ]
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.7",
     "classnames": "^2.5.1",
+    "dayjs": "^1.11.11",
     "eventemitter3": "^5.0.1",
     "mobx": "^6.13.0"
   },
