@@ -1,3 +1,4 @@
+export { default as MonacoEditor } from './components/monaco-editor';
 export { default as BoolSetter } from './Setters/bool-setter';
 export { default as ColorSetter } from './Setters/color-setter';
 export { default as DateSetter } from './Setters/date-setter';
