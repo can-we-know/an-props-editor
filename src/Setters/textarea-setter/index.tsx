@@ -2,15 +2,15 @@ import { Input } from 'antd';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface StringSetterProps {
+interface TextAreaSetterProps {
   value: any;
   defaultValue: string;
   placeholder?: string;
   onChange: (val: string) => void;
 }
 
-const StringSetter: React.FC<StringSetterProps> = (
-  props: StringSetterProps,
+const TextAreaSetter: React.FC<TextAreaSetterProps> = (
+  props: TextAreaSetterProps,
 ) => {
   const { placeholder, value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
@@ -25,15 +25,15 @@ const StringSetter: React.FC<StringSetterProps> = (
   };
 
   return (
-    <Input
+    <Input.TextArea
       value={valueStr}
       defaultValue={defaultValue}
-      placeholder={placeholder || ''}
       onChange={onChange}
+      placeholder={placeholder}
     />
   );
 };
 
-StringSetter.displayName = 'StringSetter';
+TextAreaSetter.displayName = 'TextAreaSetter';
 
-export default StringSetter;
+export default TextAreaSetter;

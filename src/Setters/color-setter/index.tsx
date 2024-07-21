@@ -1,18 +1,16 @@
-import { Input } from 'antd';
+import { ColorPicker } from 'antd';
+import type { Color } from 'antd/es/color-picker';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface StringSetterProps {
+interface ColorSetterProps {
   value: any;
-  defaultValue: string;
-  placeholder?: string;
-  onChange: (val: string) => void;
+  defaultValue: Color | string;
+  onChange: (val: Color | string) => void;
 }
 
-const StringSetter: React.FC<StringSetterProps> = (
-  props: StringSetterProps,
-) => {
-  const { placeholder, value, defaultValue } = props;
+const ColorSetter: React.FC<ColorSetterProps> = (props: ColorSetterProps) => {
+  const { value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
   // 如果有变量绑定，则展示默认值
   const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
@@ -20,20 +18,19 @@ const StringSetter: React.FC<StringSetterProps> = (
   const onChange = (e: any) => {
     const { onChange } = props;
     if (onChange) {
-      onChange(e.target.value);
+      onChange(e);
     }
   };
 
   return (
-    <Input
+    <ColorPicker
       value={valueStr}
       defaultValue={defaultValue}
-      placeholder={placeholder || ''}
       onChange={onChange}
     />
   );
 };
 
-StringSetter.displayName = 'StringSetter';
+ColorSetter.displayName = 'ColorSetter';
 
-export default StringSetter;
+export default ColorSetter;

@@ -1,1 +1,10 @@
-export { default as StringSetter  } from './setters/string-setter';
+export { default as BoolSetter } from './Setters/bool-setter';
+export { default as ColorSetter } from './Setters/color-setter';
+export { default as DateSetter } from './Setters/date-setter';
+export { default as DateRangeSetter } from './Setters/daterange-setter';
+export { default as IconSetter } from './Setters/icon-setter';
+export { default as NumberSetter } from './Setters/number-setter';
+export { default as RadioGroupSetter } from './Setters/radiogroup-setter';
+export { default as SelectSetter } from './Setters/select-setter';
+export { default as StringSetter } from './Setters/string-setter';
+export { default as TextAreaSetter } from './Setters/textarea-setter';

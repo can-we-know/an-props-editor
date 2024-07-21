@@ -9,5 +9,5 @@ nav:
 ```jsx
 import { StringSetter } from '@an/props-editor';
 
-export default () => <StringSetter />
+export default () => <StringSetter />;
 ```

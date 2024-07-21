@@ -1,16 +1,20 @@
-import { Input } from 'antd';
+import { DatePicker } from 'antd';
+import type { Dayjs } from 'dayjs';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface StringSetterProps {
+const { RangePicker } = DatePicker;
+type RangeValue = [Dayjs | null, Dayjs | null];
+
+interface DateRangeSetterProps {
   value: any;
-  defaultValue: string;
-  placeholder?: string;
-  onChange: (val: string) => void;
+  defaultValue: RangeValue;
+  placeholder?: [string, string];
+  onChange: (val: RangeValue) => void;
 }
 
-const StringSetter: React.FC<StringSetterProps> = (
-  props: StringSetterProps,
+const DateRangeSetter: React.FC<DateRangeSetterProps> = (
+  props: DateRangeSetterProps,
 ) => {
   const { placeholder, value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
@@ -20,20 +24,20 @@ const StringSetter: React.FC<StringSetterProps> = (
   const onChange = (e: any) => {
     const { onChange } = props;
     if (onChange) {
-      onChange(e.target.value);
+      onChange(e);
     }
   };
 
   return (
-    <Input
+    <RangePicker
       value={valueStr}
       defaultValue={defaultValue}
-      placeholder={placeholder || ''}
+      placeholder={placeholder || ['', '']}
       onChange={onChange}
     />
   );
 };
 
-StringSetter.displayName = 'StringSetter';
+DateRangeSetter.displayName = 'DateRangeSetter';
 
-export default StringSetter;
+export default DateRangeSetter;
