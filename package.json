@@ -46,6 +46,7 @@
     ]
   },
   "dependencies": {
+    "@angroup/monaco-editor": "^1.0.0",
     "classnames": "^2.5.1",
     "eventemitter3": "^5.0.1",
     "mobx": "^6.13.0"

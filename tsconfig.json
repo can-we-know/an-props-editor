@@ -8,8 +8,8 @@
     "baseUrl": "./",
     "paths": {
       "@@/*": [".dumi/tmp/*"],
-      "an-props-editor": ["src"],
-      "an-props-editor/*": ["src/*", "*"]
+      "@an/props-editor": ["src"],
+      "@an/props-editor/*": ["src/*", "*"]
     }
   },
   "include": [".dumirc.ts", "src/**/*"]

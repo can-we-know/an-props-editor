@@ -6,7 +6,7 @@ import classNames from 'classnames';
 // import { setterConfig } from './setter-config';
 import PropsStore from './store';
 import StoreContext from './store/context';
-import ThemeContext from './theme-context';
+import ThemeContext from '../theme-context';
 
 const { TabPane } = Tabs;
 
