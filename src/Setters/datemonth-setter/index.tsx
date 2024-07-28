@@ -1,18 +1,19 @@
-import { InputNumber } from 'antd';
+import { DatePicker } from 'antd';
+import type { Dayjs } from 'dayjs';
 import React from 'react';
 import { JS_EXPRESSION } from '../utils';
 
-interface NumberSetterProps {
+interface DateMonthSetterProps {
   value: any;
-  defaultValue: number;
+  defaultValue: Dayjs;
   placeholder?: string;
-  onChange: (val: number) => void;
+  onChange: (val: Dayjs) => void;
 }
 
-const NumberSetter: React.FC<NumberSetterProps> = (
-  props: NumberSetterProps,
+const DateMonthSetter: React.FC<DateMonthSetterProps> = (
+  props: DateMonthSetterProps,
 ) => {
-  const { value, defaultValue, placeholder } = props;
+  const { placeholder, value, defaultValue } = props;
   const val = value === undefined ? defaultValue : value;
   // 如果有变量绑定，则展示默认值
   const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
@@ -25,15 +26,16 @@ const NumberSetter: React.FC<NumberSetterProps> = (
   };
 
   return (
-    <InputNumber
+    <DatePicker
       value={valueStr}
       defaultValue={defaultValue}
       placeholder={placeholder || ''}
       onChange={onChange}
+      picker="month"
     />
   );
 };
 
-NumberSetter.displayName = 'NumberSetter';
+DateMonthSetter.displayName = 'DateMonthSetter';
 
-export default NumberSetter;
+export default DateMonthSetter;

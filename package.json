@@ -45,12 +45,16 @@
       "prettier --parser=typescript --write"
     ]
   },
+  "resolutions": {
+    "@swc/types": "0.1.9"
+  },
   "dependencies": {
     "@angroup/monaco-editor": "^1.0.0",
     "@ant-design/icons": "^5.3.7",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.11",
     "eventemitter3": "^5.0.1",
+    "js-beautify": "^1.15.1",
     "mobx": "^6.13.0"
   },
   "devDependencies": {

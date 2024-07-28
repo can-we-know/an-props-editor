@@ -10,11 +10,13 @@ nav:
 import { MonacoEditor } from '@an/props-editor';
 
 export default () => {
-  return <MonacoEditor
-    value="const a = 1;"
-    width="100%"
-    height={200}
-    language="javascript"
-  />;
-}
+  return (
+    <MonacoEditor
+      value="const a = 1;"
+      width="100%"
+      height={200}
+      language="javascript"
+    />
+  );
+};
 ```
