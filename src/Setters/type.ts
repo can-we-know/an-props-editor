@@ -23,7 +23,7 @@ export enum SetterType {
   SELECTSETTER = 'SelectSetter',
 }
 
-export interface SetterItem {
+export interface SetterMetaItem {
   componentName: string;
   props?: Record<string, any>;
   isReqired?: boolean;
@@ -44,7 +44,7 @@ export interface PropsInfo {
     | any;
   propType?: any;
   defaultValue?: any;
-  setter?: string | SetterItem | (string | SetterItem)[];
+  setter?: string | SetterMetaItem | (string | SetterMetaItem)[];
   supportVariable?: boolean;
   condition?: any;
   extraProps?: {

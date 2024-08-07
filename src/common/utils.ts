@@ -1,4 +1,4 @@
-import { SetterItem, SetterType } from './type';
+import { SetterMetaItem, SetterType } from '../types';
 
 export const JS_EXPRESSION = 'JSExpression';
 export const JS_SLOT = 'JSSlot';
@@ -17,7 +17,7 @@ export const initialValueMap = {
 };
 
 export function hasSetterType(
-  setters: (string | SetterItem)[],
+  setters: (string | SetterMetaItem)[],
   targetSetter: string,
 ) {
   if (!setters || setters.length === 0) {
@@ -27,7 +27,7 @@ export function hasSetterType(
     const item = setters[i];
     if (
       item === targetSetter ||
-      (item as SetterItem)?.componentName === targetSetter
+      (item as SetterMetaItem)?.componentName === targetSetter
     ) {
       return item;
     }
@@ -35,17 +35,17 @@ export function hasSetterType(
   return false;
 }
 
-export function addVariableSetter(setters: (string | SetterItem)[]) {
+export function addVariableSetter(setters: (string | SetterMetaItem)[]) {
   if (!hasSetterType(setters, SetterType.VARIABLESETTER)) {
     setters.push(SetterType.VARIABLESETTER);
   }
 }
 
 export function getDefaultSetter(
-  value: { type: string; value: any } | null | undefined,
-  setterList: any[],
+  value: any,
+  setterList: (string | SetterMetaItem)[],
   isMixed: boolean,
-): { setterInfo: any; setterKey: string } | undefined {
+): { setterInfo: any; setterKey: string } | void {
   if (value === undefined || value === null || !isMixed) {
     return;
   }
@@ -90,7 +90,8 @@ export function getDefaultSetter(
   if (typeof value === 'string') {
     const selectSetterInfo = hasSetterType(setterList, SetterType.SELECTSETTER);
     if (selectSetterInfo) {
-      const { options = [] } = (selectSetterInfo as SetterItem)?.props || {};
+      const { options = [] } =
+        (selectSetterInfo as SetterMetaItem)?.props || {};
       for (let i = 0; i < options.length; ++i) {
         if (options[i].value === value) {
           return {

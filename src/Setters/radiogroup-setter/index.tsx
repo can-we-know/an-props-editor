@@ -1,48 +1,56 @@
-import { Radio } from 'antd';
 import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import { Radio, RadioChangeEvent } from 'antd';
+import './index.less';
 
-interface RadioGroupSetterProps {
-  value: any;
-  defaultValue: string;
-  onChange: (val: string) => void;
-  options: { label: string; value: string }[];
+export interface OptionsItem {
+  label?: string;
+  value: string;
+  title?: string;
+  // disabled?: boolean;
 }
 
-const RadioGroupSetter: React.FC<RadioGroupSetterProps> = (
-  props: RadioGroupSetterProps,
-) => {
-  const { value, defaultValue, options } = props;
-  const val = value === undefined ? defaultValue : value;
-  // 如果有变量绑定，则展示默认值
-  const [valueStr, setValueStr] = React.useState(
-    value && value.type === JS_EXPRESSION ? defaultValue : val,
-  );
+export interface RadioGroupSetterProps {
+  value: boolean;
+  disabled?: boolean;
+  options: (string | number | OptionsItem)[] ;
+  defaultValue: any;
+  onChange: (val: any) => void;
+}
 
-  const onChange = (e: any) => {
-    const { onChange } = props;
-    setValueStr(e.target.value);
+
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
+
+export default function RadioGroupSetter(props: RadioGroupSetterProps) {
+
+  const { options = [], onChange, disabled, value, defaultValue } = props;
+
+  const handleChange = (e: RadioChangeEvent) => {
+    const { value } = e.target;
     if (onChange) {
-      onChange(e.target.value);
+      onChange(value);
     }
+  };
+  const renderOptions = () => {
+    return options.map((item, index) => {
+      if (typeof item === 'string' || typeof item === 'number') {
+        return <RadioButton key={`${index}-${item}`} value={item}>{item}</RadioButton>;
+      }
+      const { label, title, value } = item || {};
+      return <RadioButton key={`${index}-${label || title}`} value={value}>{label || title}</RadioButton>;
+    });
   };
 
   return (
-    <Radio.Group
-      options={
-        options || [
-          { label: 'Apple', value: 'Apple' },
-          { label: 'Android', value: 'Android' },
-        ]
-      }
-      onChange={onChange}
-      value={valueStr}
-      defaultValue={defaultValue}
-      optionType="button"
-    />
+    <div className="ape-setter-radiogroup">
+      <RadioGroup
+        disabled={disabled}
+        value={value || defaultValue}
+        onChange={handleChange}
+      >
+        {renderOptions()}
+      </RadioGroup>
+    </div>
   );
-};
+}
 
-RadioGroupSetter.displayName = 'RadioGroupSetter';
-
-export default RadioGroupSetter;

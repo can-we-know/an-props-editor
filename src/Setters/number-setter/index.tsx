@@ -1,39 +1,69 @@
+import * as React from 'react';
 import { InputNumber } from 'antd';
-import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import { JS_EXPRESSION } from '@/common/utils';
+import './index.less';
 
 interface NumberSetterProps {
+  min?: number;
+  max?: number;
+  defaultValue?: number;
+  step?: number | string;
+  units?: string;
   value: any;
-  defaultValue: number;
-  placeholder?: string;
-  onChange: (val: number) => void;
+  onChange: (val: string) => void;
 }
 
-const NumberSetter: React.FC<NumberSetterProps> = (
-  props: NumberSetterProps,
-) => {
-  const { value, defaultValue, placeholder } = props;
-  const val = value === undefined ? defaultValue : value;
-  // 如果有变量绑定，则展示默认值
-  const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
+export default function NumberSetter(props: NumberSetterProps) {
 
-  const onChange = (e: any) => {
-    const { onChange } = props;
-    if (onChange) {
-      onChange(e);
-    }
+  const onChange = (val: any) => {
+    const { onChange, units } = props;
+    const value = units ? `${val}${units}` : val;
+    onChange(value);
   };
 
+  const numberFormatter = (value: any) => {
+    const { units = '' } = props;
+    if (units && typeof value === 'string') {
+      return value.replace(units, '');
+    }
+    return value;
+  };
+
+  const numberParser = (value: any) => {
+    // 返回空字符串， 表示删除
+    if (value === '') {
+      return undefined;
+    }
+    const num = +value;
+    // num非NaN，则返回nun
+    return isNaN(num) ? '' : num;
+  };
+
+  const {
+    min = Number.MIN_SAFE_INTEGER,
+    max = Number.MAX_SAFE_INTEGER,
+    step = 1,
+    value,
+    defaultValue,
+    units,
+  } = props;
+  // 如果有变量绑定，则展示默认值
+  const val = value === undefined ? defaultValue : value;
+  const valueStr = (value && value.type === JS_EXPRESSION) ? defaultValue : val;
   return (
-    <InputNumber
-      value={valueStr}
-      defaultValue={defaultValue}
-      placeholder={placeholder || ''}
-      onChange={onChange}
-    />
+    <div className="ape-setter-number">
+      <InputNumber
+        className="ape-setter-number-input"
+        value={valueStr}
+        defaultValue={defaultValue}
+        min={min}
+        max={max}
+        step={step}
+        parser={numberParser}
+        formatter={numberFormatter}
+        onChange={onChange}
+      />
+      {units && <div className="ape-setter-number-inner">{units}</div>}
+    </div>
   );
-};
-
-NumberSetter.displayName = 'NumberSetter';
-
-export default NumberSetter;
+}

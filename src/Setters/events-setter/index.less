@@ -1,0 +1,92 @@
+// [data-ant-ide-theme-base='dark'], // 弹层的样式也需要覆盖 
+// [data-ant-ide-theme-base='dark'] 
+.lowcode-setter-events {
+  background-color: var(--idePanelBg);
+  padding: 0 10px;
+  position: relative;
+  min-height: 450px;
+
+  .event-title {
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    color: var(--ideTextColorPrimary);
+  }
+
+  .ant-radio-button-wrapper {
+    width: 100%;
+    -webkit-box-flex: 1;
+    -webkit-flex: auto;
+    -ms-flex: auto;
+    flex: auto;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .event-cell {
+    padding-left: 25px;
+    position: relative;
+    font-size: 12px;
+  }
+
+  .event-type-tag {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 0;
+    top: -2px;
+    border-radius: 50%;
+    line-height: 20px;
+    text-align: center;
+    color: #fff;
+    background-color: var(--ideButtonBgPrimary, #2077ff);
+  }
+
+  .related-icon {
+    margin-right: 5px;
+  }
+
+  .related-event-name {
+    color: #2077ff;
+    cursor: pointer;
+  }
+
+  .event-menu {
+    max-height: 300px;
+    overflow-x: hidden;
+    position: absolute;
+    top: 67px;
+    left: 10px;
+    z-index: 10;
+  }
+
+  .event-table {
+    margin-top: 20px;
+  }
+
+  .event-operate-icon {
+    cursor: pointer;
+  }
+
+  .row-container .title-text {
+    color: #fff;
+  }
+
+  .event-dialog-body .dialog-small-title {
+    color: #fff;
+  }
+
+  .event-operate-icon:hover {
+    color: var(--ideButtonBgPrimary, #0079f2);
+  }
+
+  .event-body .related-event-name {
+    color: var(--ideButtonBgPrimary, #2077ff);
+  }
+
+  .event-dialog-body.dialog-left-container.dialog-left-context.select-item-active {
+    background-color: hsla(0, 0%, 50.2%, 0.15);
+  }
+}

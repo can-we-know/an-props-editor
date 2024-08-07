@@ -1,0 +1,30 @@
+@prefix: ape-accordion-field;
+
+.ape-props-setter-container {
+  .@{prefix} {
+    border: none;
+    border-radius: 0;
+
+    .ant-collapse-item {
+      border: none;
+
+      .ant-collapse-header {
+        padding: 5px 12px;
+        border-radius: 0;
+        background-color: var(--idePanelTitleBg, rgba(31, 56, 88, 0.06));
+        color: var(--ideTextColorPrimary, rgba(0, 0, 0, 0.8));
+        border-top: 1px solid var(--ideBorderColorObvious, rgba(31, 56, 88, 0.1));
+        border-bottom: 1px solid var(--ideBorderColorObvious, rgba(31, 56, 88, 0.1));
+      }
+
+      .ant-collapse-content {
+        border: none;
+        border-radius: 0;
+
+        .ant-collapse-content-box {
+          padding: 12px;
+        }
+      }
+    }
+  }
+}

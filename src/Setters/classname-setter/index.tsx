@@ -1,6 +1,6 @@
 import { Select } from 'antd';
 import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import { JS_EXPRESSION } from '@/common/utils';
 
 interface ClassNameSetterProps {
   value: any;

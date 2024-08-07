@@ -8,8 +8,9 @@ nav:
 
 This is an example component.
 
-<!-- ```jsx
-import Foo from '@an/props-editor';
+```jsx
+import AnPropsEditor from '@an/props-editor';
+import testMeta from '@/simple-meta.test.ts';
 
-export default () => <Foo title="Hello dumi!" />
-``` -->
+export default () => <AnPropsEditor metaInfo={testMeta} />
+```

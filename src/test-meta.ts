@@ -20,10 +20,7 @@ export default {
       },
       propType: {
         type: 'oneOfType',
-        value: [
-          'string',
-          'node',
-        ],
+        value: ['string', 'node'],
       },
     },
     {
@@ -34,10 +31,7 @@ export default {
       },
       propType: {
         type: 'oneOf',
-        value: [
-          'left',
-          'right',
-        ],
+        value: ['left', 'right'],
       },
       setter: {
         componentName: 'RadioGroupSetter',
@@ -73,10 +67,7 @@ export default {
       },
       propType: {
         type: 'oneOfType',
-        value: [
-          'string',
-          'node',
-        ],
+        value: ['string', 'node'],
       },
     },
     {
@@ -162,7 +153,8 @@ export default {
               },
             },
           },
-          description: 'label 标签布局，同 `<Col>` 组件，设置 span offset 值，如 {span: 8, offset: 16}，该项仅在垂直表单有效',
+          description:
+            'label 标签布局，同 `<Col>` 组件，设置 span offset 值，如 {span: 8, offset: 16}，该项仅在垂直表单有效',
         },
         {
           name: 'wrapperCol',
@@ -199,7 +191,8 @@ export default {
               },
             },
           },
-          description: '需要为输入控件设置布局样式时，使用该属性，用法同 labelCol',
+          description:
+            '需要为输入控件设置布局样式时，使用该属性，用法同 labelCol',
         },
       ],
     },
@@ -258,12 +251,7 @@ export default {
             },
             propType: {
               type: 'oneOf',
-              value: [
-                'string',
-                'number',
-                'email',
-                'url',
-              ],
+              value: ['string', 'number', 'email', 'url'],
             },
           },
           {
@@ -530,11 +518,7 @@ export default {
           type: 'arrayOf',
           value: {
             type: 'oneOf',
-            value: [
-              'click',
-              'hover',
-              'contextMenu',
-            ],
+            value: ['click', 'hover', 'contextMenu'],
           },
         },
         setter: {
@@ -626,10 +610,7 @@ export default {
           type: 'arrayOf',
           value: {
             type: 'oneOfType',
-            value: [
-              'string',
-              'number',
-            ],
+            value: ['string', 'number'],
           },
         },
         setter: {
@@ -694,10 +675,7 @@ export default {
         name: 'slot',
         propType: {
           type: 'oneOfType',
-          value: [
-            'string',
-            'node',
-          ],
+          value: ['string', 'node'],
         },
         setter: {
           componentName: 'MixedSetter',
@@ -727,10 +705,7 @@ export default {
         name: 'labelAlign',
         propType: {
           type: 'oneOf',
-          value: [
-            'left',
-            'right',
-          ],
+          value: ['left', 'right'],
         },
         setter: {
           componentName: 'MixedSetter',
@@ -787,10 +762,7 @@ export default {
         name: 'extra',
         propType: {
           type: 'oneOfType',
-          value: [
-            'string',
-            'node',
-          ],
+          value: ['string', 'node'],
         },
         setter: {
           componentName: 'MixedSetter',
@@ -918,8 +890,7 @@ export default {
         title: 'variable',
         setter: {
           componentName: 'VariableSetter',
-          props: {
-          },
+          props: {},
         },
       },
       {
@@ -966,10 +937,7 @@ export default {
         setter: {
           componentName: 'MixedSetter',
           props: {
-            setters: [
-              'IconSetter',
-              'VariableSetter',
-            ],
+            setters: ['IconSetter', 'VariableSetter'],
           },
         },
       },
@@ -1126,7 +1094,8 @@ export default {
                 },
               },
             },
-            description: 'label 标签布局，同 `<Col>` 组件，设置 span offset 值，如 {span: 8, offset: 16}，该项仅在垂直表单有效',
+            description:
+              'label 标签布局，同 `<Col>` 组件，设置 span offset 值，如 {span: 8, offset: 16}，该项仅在垂直表单有效',
           },
           {
             name: 'wrapperCol',
@@ -1163,7 +1132,8 @@ export default {
                 },
               },
             },
-            description: '需要为输入控件设置布局样式时，使用该属性，用法同 labelCol',
+            description:
+              '需要为输入控件设置布局样式时，使用该属性，用法同 labelCol',
           },
         ],
         setter: {
@@ -1254,8 +1224,7 @@ export default {
                     },
                   },
                 },
-                initialValue: {
-                },
+                initialValue: {},
               },
               'VariableSetter',
             ],
@@ -1295,12 +1264,7 @@ export default {
               },
               propType: {
                 type: 'oneOf',
-                value: [
-                  'string',
-                  'number',
-                  'email',
-                  'url',
-                ],
+                value: ['string', 'number', 'email', 'url'],
               },
             },
             {
@@ -1351,12 +1315,7 @@ export default {
                         },
                         propType: {
                           type: 'oneOf',
-                          value: [
-                            'string',
-                            'number',
-                            'email',
-                            'url',
-                          ],
+                          value: ['string', 'number', 'email', 'url'],
                         },
                       },
                       {
@@ -1385,8 +1344,7 @@ export default {
                     },
                   },
                 },
-                initialValue: {
-                },
+                initialValue: {},
               },
               'VariableSetter',
             ],
@@ -1492,7 +1450,8 @@ export default {
                 },
                 initialValue: {
                   type: 'LowCodeFunction',
-                  value: 'function(e){var t={};return n.forEach((function(l){var a=l.defaultValue;null==a&&l.setter&&"object"==typeof l.setter&&(a=l.setter.initialValue),t[l.name]=a?"function"==typeof a?a(e):a:null})),t}',
+                  value:
+                    'function(e){var t={};return n.forEach((function(l){var a=l.defaultValue;null==a&&l.setter&&"object"==typeof l.setter&&(a=l.setter.initialValue),t[l.name]=a?"function"==typeof a?a(e):a:null})),t}',
                 },
               },
               'VariableSetter',
@@ -1576,7 +1535,8 @@ export default {
                 },
                 initialValue: {
                   type: 'LowCodeFunction',
-                  value: 'function(e){var t={};return n.forEach((function(l){var a=l.defaultValue;null==a&&l.setter&&"object"==typeof l.setter&&(a=l.setter.initialValue),t[l.name]=a?"function"==typeof a?a(e):a:null})),t}',
+                  value:
+                    'function(e){var t={};return n.forEach((function(l){var a=l.defaultValue;null==a&&l.setter&&"object"==typeof l.setter&&(a=l.setter.initialValue),t[l.name]=a?"function"==typeof a?a(e):a:null})),t}',
                 },
               },
               'VariableSetter',
@@ -1590,14 +1550,16 @@ export default {
     callbacks: {
       onNodeRemove: {
         type: 'LowCodeFunction',
-        value: '(e,t)=>{if(!e||!t)return;const l=t.children;l&&0===l.length&&t.remove()}',
+        value:
+          '(e,t)=>{if(!e||!t)return;const l=t.children;l&&0===l.length&&t.remove()}',
       },
     },
   },
   snippets: [
     {
       title: '表单项',
-      screenshot: 'https://gw.alipayobjects.com/zos/wenyu-lowcode/kwcwhk3r/form-item-1.jpg',
+      screenshot:
+        'https://gw.alipayobjects.com/zos/wenyu-lowcode/kwcwhk3r/form-item-1.jpg',
       schema: {
         componentName: 'Form.Item',
         props: {
@@ -1607,7 +1569,7 @@ export default {
     },
   ],
   npm: {
-    package: '@ali/domino-antd/lib/form',
+    package: 'antd/lib/form',
     version: '0.2.0',
     exportName: 'Form',
     destructuring: true,

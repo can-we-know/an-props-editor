@@ -1,0 +1,49 @@
+@prefix: ape-inline;
+
+.@{prefix}-field {
+  display: flex;
+  margin: 12px;
+  align-items: center;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &-head {
+    width: 70px;
+    word-break: break-all;
+    font-size: 12px;
+  }
+
+  &-body {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  &-setter {
+    flex: 1;
+  }
+
+  &-action {
+    margin-left: 6px;
+    display: flex;
+    flex-grow: 0;
+
+    &-active {
+      background-color: var(--ideBrandColor, #006cff);
+      color: #fff;
+    }
+
+    span {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+}
+
+.ape-setter-number {
+  width: 100%;
+  position: relative;
+}

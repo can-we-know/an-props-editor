@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { ElementType, useEffect, useState } from 'react';
 import { Empty, Tabs } from 'antd';
 import classNames from 'classnames';
 // import EventEmitter from 'eventemitter3';
-// import { observe, toJS } from 'mobx';
-// import { setterConfig } from './setter-config';
+import { observe, toJS } from 'mobx';
+import setterConfig from '../setter-config';
+import PropsSetter from '../components/props-setter';
 import PropsStore from './store';
 import StoreContext from './store/context';
-import ThemeContext from '../theme-context';
-
-const { TabPane } = Tabs;
+import ThemeContext, { ThemeEnum } from '../theme-context';
+import { MetaInfoType, PropsInfoType } from '@/types';
+import EntryContent from '@/components/entry-content';
+// import { JS_SLOT } from '@/common/utils';
 
 // const defaultProps = {
 //   title: '',
@@ -22,44 +24,66 @@ enum TabKey {
   EVENT = 'event',
 }
 
-export default function PropsEditor(props: any) {
+export interface apePropsEditorPropsType {
+  className?: string;
+  prefixCls?: string; 
+  theme?: ThemeEnum;
+  metaInfo: MetaInfoType;
+}
 
-  const [ store, setStore ] = useState<PropsStore>(); 
 
+export default function AnPropsEditor(props: apePropsEditorPropsType) {
+
+  const [ store ] = useState<PropsStore>(new PropsStore()); 
+  const [ setterMap, setSetterMap ] = useState<Record<string, ElementType>>(setterConfig);
+  const [ entryMetaInfo, setEntryMetaInfo ] = useState<PropsInfoType | null>(null);
+  const { metaInfo } = props;
   useEffect(() => {
-    const newStore = new PropsStore();
-    setStore(newStore);
+    return observe(store.data, (changeData: Record<string, any>) => {
+      // const { name, newValue } = changeData;
+      console.log('change', toJS(changeData));
+      // this.emit('propChange', { propName: name, propValue: newValue });
+    });
   }, []);
 
-  const { metaInfo } = props;
   if (!metaInfo) {
     return <Empty description="请选择节点" />;
   }
 
-  const { className, prefixCls, theme } = props;
+  const onEntryMetaInfoChange = (metaInfo: PropsInfoType) => {
+    setEntryMetaInfo(metaInfo);
+  };
+
+  const onEntryBack = () => {
+    setEntryMetaInfo(null);
+  };
+
+  const { configure, componentName } = metaInfo || {};
+  // const supports: any = configure?.supports || {};
+  // const { style, events } = supports;
+  const propsInfo: PropsInfoType[] = configure?.props || [];
+  const { className ='', prefixCls = 'ape-props-editor-container', theme = ThemeEnum.LIGHT } = props;
   const cls = classNames({
     [prefixCls]: true,
     [className]: className,
   });
   return (
-    <StoreContext.Provider value={store as PropsStore}>
+    <StoreContext.Provider value={store}>
         <ThemeContext.Provider value={theme}>
           <div className={cls}>
-            <Tabs>
-              <TabPane key={TabKey.PROPS} tab="属性">
-                <div className="domino-props-tab-content">
-                  {/* {!entryMetaInfo && (
-                    <PropsSetter
-                      key={componentName}
-                      propsInfo={propsInfo}
-                      onEntryMetaInfoChange={this.onEntryMetaInfoChange}
-                      setterMap={setterMap}
-                      value={this.store.data}
-                    />
-                  )} */}
-                </div>
-              </TabPane>
-              </Tabs>
+            <Tabs 
+              defaultActiveKey={TabKey.PROPS}
+              items={[
+                {
+                  label: '属性',
+                  key: TabKey.PROPS,
+                  children: <div className="ape-props-tab-content">
+                    {!entryMetaInfo && <PropsSetter key={componentName} propsInfo={propsInfo} onEntryMetaInfoChange={onEntryMetaInfoChange} setterMap={setterMap} value={store.data} />}
+                    {entryMetaInfo && <EntryContent onBack={onEntryBack} setterMap={setterMap} onEntryMetaInfoChange={onEntryMetaInfoChange} data={store.data} metaInfo={entryMetaInfo} />}
+                  </div>,
+                },
+              ]}
+            />
           </div>
         </ThemeContext.Provider>
     </StoreContext.Provider>

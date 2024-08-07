@@ -1,0 +1,78 @@
+// @import './theme/dark.less';
+
+// [data-ant-ide-theme-base='dark'], // 弹层的样式也需要覆盖
+// [data-ant-ide-theme-base='dark']
+.lowcode-setter-style-v2 {
+  padding: 12px;
+  background-color: var(--idePanelBg);
+
+  .top-bar {
+    margin-bottom: 10px;
+    .top-bar-css-icon {
+      font-size: 20px;
+    }
+  }
+
+  .top-icon {
+    cursor: pointer;
+  }
+
+  .top-icon-active {
+    color: #5584ff;
+    cursor: pointer;
+  }
+
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    height: 37px;
+    padding: 8px 0 8px 36px;
+    box-sizing: border-box;
+  }
+
+  .ant-collapse-content {
+    padding: 0 16px;
+    background: var(--ideTabLayoutBg);
+    font-size: 14px;
+    color: var(--apeTextColorReverse);
+    transition: all 300ms ease;
+  }
+
+  .row-container .title-text {
+    color: var(--apeTextColorReverse);
+  }
+
+  // .layout-box-container {
+  //   .margin-top-div,
+  //   .margin-right-div,
+  //   .margin-left-div,
+  //   .margin-bottom-div,
+  //   .padding-top-div,
+  //   .padding-right-div,
+  //   .padding-bottom-div,
+  //   .padding-left-div {
+  //     border-color: var(--idePopBackground, #d6e4ff)
+  //   }
+  // }
+
+  .ant-radio-group {
+    .setter-choose-checked {
+      border: 1px solid var(--ideButtonBgPrimary);
+      background-color: var(--ideButtonBgPrimary);
+      color: #fff;
+
+      &.setter-choose-label:hover {
+        color: #fff;
+        background-color: var(--ideButtonBgPrimary);
+      }
+    }
+
+    .setter-choose-label {
+      color: #fff;
+      border: 1px solid var(--ideBorderColorObvious);
+
+      &:hover {
+        color: var(--ideButtonBgPrimary);
+        background-color: var(--idePanelBg);
+      }
+    }
+  }
+}

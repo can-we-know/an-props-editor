@@ -1,6 +1,6 @@
-import ThemeContext from '@an/props-editor/theme-context';
-import MonacoEditor from '@angroup/monaco-editor';
 import React from 'react';
+import MonacoEditor from '@angroup/monaco-editor';
+import ThemeContext from '../../theme-context';
 
 const monacoOptions = {
   selectOnLineNumbers: true,
@@ -15,14 +15,12 @@ export default function BaseMonacoEditor(props: Record<string, any>) {
   return (
     <ThemeContext.Consumer>
       {(theme) => (
-        <div className="an-monaco-editor">
+        <div className="ape-setter-monaco-editor">
           <MonacoEditor
             theme={theme === 'dark' ? 'vs-dark' : 'light'}
             options={monacoOptions}
             {...props}
           />
-        </div>
-      )}
-    </ThemeContext.Consumer>
-  );
+        </div>)}
+    </ThemeContext.Consumer>);
 }

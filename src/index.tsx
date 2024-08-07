@@ -1,3 +1,4 @@
+import AnPropsEditor from './editor';
 export { default as MonacoEditor } from './components/monaco-editor';
 export { default as BoolSetter } from './setters/bool-setter';
 export { default as ClassNameSetter } from './setters/classname-setter';
@@ -16,3 +17,5 @@ export { default as SlotSetter } from './setters/slot-setter';
 export { default as StringSetter } from './setters/string-setter';
 export { default as TextAreaSetter } from './setters/textarea-setter';
 export { default as TitleSetter } from './setters/title-setter';
+
+export default AnPropsEditor;

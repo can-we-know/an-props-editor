@@ -1,39 +1,36 @@
+import React, { ChangeEvent } from 'react';
 import { Input } from 'antd';
-import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import { JS_EXPRESSION } from '@/common/utils';
+import './index.less';
 
 interface TextAreaSetterProps {
   value: any;
   defaultValue: string;
-  placeholder?: string;
+  placeholder: string;
   onChange: (val: string) => void;
 }
 
-const TextAreaSetter: React.FC<TextAreaSetterProps> = (
-  props: TextAreaSetterProps,
-) => {
-  const { placeholder, value, defaultValue } = props;
-  const val = value === undefined ? defaultValue : value;
-  // 如果有变量绑定，则展示默认值
-  const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
+const { TextArea } = Input;
 
-  const onChange = (e: any) => {
-    const { onChange } = props;
+export default function TextAreaSetter(props: TextAreaSetterProps) {
+  const { onChange, placeholder, value, defaultValue } = props;
+
+  const onValueChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
       onChange(e.target.value);
     }
   };
 
+  const val = value === undefined ? defaultValue : value;
+  // 如果有变量绑定，则展示默认值
+  const valueStr = (value && value.type === JS_EXPRESSION) ? defaultValue : val;
   return (
-    <Input.TextArea
+    <TextArea
+      className="ape-textarea-setter"
       value={valueStr}
       defaultValue={defaultValue}
-      onChange={onChange}
-      placeholder={placeholder}
+      placeholder={placeholder || ''}
+      onChange={onValueChange}
     />
   );
-};
-
-TextAreaSetter.displayName = 'TextAreaSetter';
-
-export default TextAreaSetter;
+}

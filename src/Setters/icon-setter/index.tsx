@@ -1,119 +1,253 @@
-import Icon, * as Icons from '@ant-design/icons';
-import { Col, Input, Modal, Radio, Row } from 'antd';
-import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import React, { ElementType, useState, useMemo, SyntheticEvent, ChangeEvent } from 'react';
+import { Input, Radio, Popover, RadioChangeEvent } from 'antd';
+import * as antdIcons from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 
-interface IconSetterProps {
-  value: any;
-  defaultValue: string;
-  placeholder?: string;
-  onChange: (val: string) => void;
-}
+import './index.less';
 
-const IconSetter: React.FC<IconSetterProps> = (props: IconSetterProps) => {
-  const { placeholder, value, defaultValue, onChange } = props;
-  const val = value === undefined ? defaultValue : value;
-  const [visible, setVisible] = React.useState(false);
-  const [selectedIcon, setSelectedIcon] = React.useState(
-    value && value.type === JS_EXPRESSION ? defaultValue : val,
-  );
-  const [iconStyle, setIconStyle] = React.useState('outlined');
+const { Search } = Input;
 
-  const handleIconClick = (iconName: any) => {
-    setSelectedIcon(iconName);
-    if (onChange) {
-      onChange(iconName);
-    }
-    setVisible(false);
-  };
+type IconGroup = 'outlined' | 'filled' | 'two-tone' | 'iconfont';
 
-  // const renderIcons = React.useMemo(() => {
-  //   return Object.keys(Icons)
-  //     .filter((item) => typeof (Icons as any)[item] === 'object')
-  //     .map((iconName) => {
-  //       const IconComponent = (Icons as any)[iconName];
-  //       return (
-  //         <Col
-  //           key={iconName}
-  //           span={6}
-  //           style={{ textAlign: 'center', margin: '10px 0' }}
-  //         >
-  //           <Icon
-  //             component={IconComponent}
-  //             style={{ fontSize: '24px', cursor: 'pointer' }}
-  //             onClick={() => handleIconClick(iconName)}
-  //           />
-  //           <div>{iconName}</div>
-  //         </Col>
-  //       );
-  //     });
-  // }, []);
-  const renderIcons = React.useMemo(() => {
-    return Object.keys(Icons)
-      .filter((item) => {
-        const IconComponent = (Icons as any)[item];
-        if (typeof IconComponent !== 'object') return false;
-        if (iconStyle === 'outlined' && item.includes('Outlined')) return true;
-        if (iconStyle === 'filled' && item.includes('Filled')) return true;
-        if (iconStyle === 'twotone' && item.includes('TwoTone')) return true;
-        return false;
-      })
-      .map((iconName) => {
-        const IconComponent = (Icons as any)[iconName];
-        return (
-          <Col
-            key={iconName}
-            span={6}
-            style={{ textAlign: 'center', margin: '10px 0' }}
-          >
-            <Icon
-              component={IconComponent}
-              style={{ fontSize: '24px', cursor: 'pointer' }}
-              onClick={() => handleIconClick(iconName)}
-            />
-            <div>{iconName}</div>
-          </Col>
-        );
-      });
-  }, [iconStyle]);
-
-  const SelectedIconComponent = (Icons as any)[selectedIcon];
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ marginRight: '20px' }}>
-        {SelectedIconComponent && (
-          <SelectedIconComponent style={{ fontSize: '24px' }} />
-        )}
-      </div>
-      <Input
-        style={{ width: '200px' }}
-        value={selectedIcon}
-        readOnly
-        placeholder={placeholder || ''}
-        onClick={() => setVisible(true)}
-      />
-      <Modal
-        title="Select an Icon"
-        open={visible}
-        onCancel={() => setVisible(false)}
-        footer={null}
-      >
-        <Radio.Group
-          value={iconStyle}
-          onChange={(e) => setIconStyle(e.target.value)}
-          style={{ marginBottom: 16 }}
-        >
-          <Radio.Button value="outlined">线框风格</Radio.Button>
-          <Radio.Button value="filled">实底风格</Radio.Button>
-          <Radio.Button value="twotone">双色风格</Radio.Button>
-        </Radio.Group>
-        <Row>{renderIcons}</Row>
-      </Modal>
-    </div>
-  );
+const IconGroupNameMap: Record<IconGroup, string> = {
+  outlined: '线框风格',
+  filled: '实底风格',
+  'two-tone': '双色风格',
+  iconfont: 'Iconfont',
 };
 
-IconSetter.displayName = 'IconSetter';
 
-export default IconSetter;
+function getIconfontIconList() {
+  // iconfont的js会在页面中添加svg元素
+  const symbols = Array.prototype.slice.call(
+    document.querySelectorAll(
+      'svg[style="position: absolute; width: 0px; height: 0px; overflow: hidden;"][aria-hidden="true"] > symbol',
+    ),
+  );
+
+  // const Icon = antdIcons.createFromIconfontCN();
+
+  return symbols.map(symbol => {
+    const { id } = symbol;
+    return {
+      name: id,
+      group: 'iconfont',
+      icon: () => (
+        <span role="img" className="anticon">
+          <svg
+            viewBox="64 64 896 896"
+            width="1em"
+            height="1em"
+            fill="currentColor"
+            dangerouslySetInnerHTML={{ __html: symbol.innerHTML }}
+          />
+        </span>
+      ),
+    };
+  });
+}
+
+interface IconInfoType {
+  name: string,
+  group: keyof typeof IconGroupNameMap,
+  icon: ElementType,
+}
+
+function getAntdIconList(): IconInfoType[] {
+  return Object.keys(antdIcons)
+    .map(key => {
+      const item = (antdIcons as any)[key];
+
+      if (typeof item !== 'object') {
+        return null;
+      }
+
+      const name = item?.displayName || item?.render?.displayName || key;
+      let group: IconGroup = 'outlined';
+
+      const lowercaseName = name.toLowerCase();
+
+      if (/outlined$/.test(lowercaseName)) {
+        group = 'outlined';
+      } else if (/filled$/.test(lowercaseName)) {
+        group = 'filled';
+      } else if (/twotone$/.test(lowercaseName)) {
+        group = 'two-tone';
+      } else {
+        return null;
+      }
+
+      return {
+        name,
+        group,
+        icon: item,
+      };
+    })
+    .filter(Boolean) as IconInfoType[];
+}
+
+function getIconList() {
+  const iconfontIconList = getIconfontIconList();
+  const antdIconList = getAntdIconList();
+
+  return [...antdIconList, ...iconfontIconList];
+}
+
+const Icon = (props: any) => {
+  const { type, icons = {}, ...rest } = props;
+  const Comp = icons[type];
+  if (!Comp) return null;
+  return <Comp {...rest} />;
+};
+
+interface IconSetterProps {
+  value: string;
+  // type: string;
+  defaultValue: string;
+  placeholder: string;
+  hasClear: boolean;
+  onChange: (icon: string | object) => undefined;
+  // icons: string[];
+  metaInfo: Record<string, any>;
+}
+
+export default function IconSetter(props: IconSetterProps) {
+  const { iconsMap: icons, curGroup: currentGroup, _groups: groups, selected: initSelectedGroup } = useMemo(() => {
+    const iconList = getIconList();
+    const _groups: { group: IconGroup; list: any[] }[] = [];
+    const iconsMap: any = {};
+    iconList.forEach(item => {
+      const { group } = item || {};
+      if (_groups.every(ele => ele.group !== group)) {
+        _groups.push({ group: group as IconGroup, list: [] });
+      }
+      const target = _groups.find(ele => ele.group === group);
+      target?.list?.push(item);
+      iconsMap[item.name] = item?.icon;
+    });
+    const selected = _groups[0]?.group;
+    const curGroup = _groups.find(item => item.group === selected);
+    return {
+      iconsMap,
+      curGroup,
+      selected,
+      _groups,
+    }
+  }, []);
+
+  const [ search, setSearch ] = useState<string>('');
+  const [list, setList] = useState<IconInfoType[]>(currentGroup?.list || []);
+  const [selectedGroup, setSelectGroup] = useState<string>(initSelectedGroup);
+  
+  const { hasClear = false, placeholder='请点击选择 Icon', metaInfo, onChange, value, defaultValue } = props;
+
+  const handleChange = (val: string) => () => {
+    const { propType } = metaInfo || {};
+    if (propType === 'string') {
+      onChange(val);
+    } else if (propType === 'node') {
+      onChange({
+        componentName: 'Icon',
+        props: {
+          type: val,
+        },
+      });
+    }
+  };
+
+  const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const search = e.target.value;
+    const curGroup = groups.find(item => item.group === selectedGroup);
+    const result = (curGroup?.list || []).filter(item => {
+      return search
+        ? item.name.toLowerCase().indexOf((search as string).toLowerCase()) > -1
+        : true;
+    });
+    setSearch(search);
+    setList(result);
+  };
+
+  const onTabChange = (e: RadioChangeEvent) => {
+    const selectedGroup = e.target.value;
+    const currentGroup = groups.find(item => item.group === selectedGroup);
+    const list = (currentGroup?.list || []).filter(item => {
+      return search
+        ? item.name.toLowerCase().indexOf((search as string).toLowerCase()) > -1
+        : true;
+    });
+    setList(list);
+    setSelectGroup(selectedGroup);
+  };
+
+  const onValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.value);
+    }
+  };
+
+  const renderContent = () => {
+    return (
+      <div className="ape-icon-content">
+        <div className="ape-icon-content-header">
+          <Radio.Group
+            className="ape-icon-content-header-style"
+            value={selectedGroup}
+            onChange={onTabChange}
+          >
+            {groups.map(item => (
+              <Radio.Button key={item.group} value={item.group}>
+                {IconGroupNameMap[item.group]}
+              </Radio.Button>
+            ))}
+          </Radio.Group>
+          <Search
+            className="ape-icon-content-header-search"
+            onChange={onSearch}
+          />
+        </div>
+        <div className="ape-icon-content-content">
+          <ul className="ape-icon-content-list">
+            {list.map(item => (
+              <li
+                key={item.name}
+                className="ape-icon-content-list-item"
+                onClick={handleChange(item.name)}
+              >
+                <Icon type={item.name} icons={icons} />
+                <div className="ape-icon-content-list-item-name">
+                  {item.name}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>);
+  };
+
+  const onClearClick = (e: SyntheticEvent) => {
+    e.preventDefault();
+    // e.stopPropagation();
+    handleChange('');
+  };
+
+  const currentIcon = (<Icon type={value} icons={icons} style={{ fontSize: 16 }} />);
+  const clearIcon = hasClear && (<DeleteOutlined onClick={onClearClick} />);
+  return (
+    <div className="ape-icon-setter">
+      <Popover
+        placement="leftTop"
+        content={renderContent()}
+      >
+        <Input
+          placeholder={placeholder}
+          addonBefore={currentIcon}
+          onChange={onValueChange}
+          value={value}
+          defaultValue={defaultValue}
+          readOnly
+          addonAfter={clearIcon}
+        />
+      </Popover>
+    </div>
+  );
+}

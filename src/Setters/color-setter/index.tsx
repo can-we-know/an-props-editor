@@ -1,31 +1,35 @@
 import { ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+import { JS_EXPRESSION } from '@/common/utils';
+import './index.less';
 
-interface ColorSetterProps {
+
+export interface ColorSetterProps {
   value: any;
   defaultValue: Color | string;
   onChange: (val: Color | string) => void;
 }
 
 const ColorSetter: React.FC<ColorSetterProps> = (props: ColorSetterProps) => {
-  const { value, defaultValue } = props;
+  const { value, defaultValue = '#fff' } = props;
   const val = value === undefined ? defaultValue : value;
   // 如果有变量绑定，则展示默认值
   const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
 
-  const onChange = (e: any) => {
+  const onChange = (val: any, hex: string) => {
+    console.log(val, hex);
     const { onChange } = props;
     if (onChange) {
-      onChange(e);
+      onChange(val);
     }
   };
 
   return (
     <ColorPicker
+      className="ape-color-setter"
+      showText
       value={valueStr}
-      defaultValue={defaultValue}
       onChange={onChange}
     />
   );

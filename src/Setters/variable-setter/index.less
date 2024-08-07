@@ -1,0 +1,50 @@
+.ape-setter-variable {
+  display: flex;
+  width: 100%;
+
+  .variable-setter-main {
+    flex: 1;
+  }
+
+  .variable-setter-select {
+    width: 100%;
+    position: relative;
+
+    .ant-select-arrow {
+      display: none;
+    }
+
+    .ant-select-selector {
+      padding: 0 16px;
+    }
+
+    &::before {
+      content: "{{";
+      position: absolute;
+      top: 5px;
+      left: 4px;
+      z-index: 1;
+      color: #999;
+    }
+
+    &::after {
+      content: "}}";
+      position: absolute;
+      top: 5px;
+      right: 4px;
+      z-index: 1;
+      color: #999;
+    }
+  }
+
+  .ant-select-selection {
+    padding: 0 5px 0 10px;
+    overflow: hidden;
+  }
+
+  .ant-select-selection-selected-value, .variable-setter-code-input-value {
+    word-break: break-all;
+    width: 100%;
+    white-space: normal;
+  }
+}

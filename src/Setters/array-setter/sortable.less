@@ -1,0 +1,33 @@
+.ape-setter-sortable {
+  position: relative;
+
+  &-card {
+    box-sizing: border-box;
+
+    &:after, &:before {
+      content: "";
+      display: table;
+    }
+
+    &:after {
+      clear: both;
+    }
+
+    &.ape-setter-dragging {
+      outline: 2px dashed var(--color-brand);
+      outline-offset: -2px;
+
+      > * {
+        visibility: hidden;
+      }
+
+      border-color: transparent !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+  }
+
+  [draggable] {
+    cursor: ns-resize;
+  }
+}

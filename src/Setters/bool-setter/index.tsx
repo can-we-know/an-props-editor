@@ -1,35 +1,32 @@
+import * as React from 'react';
 import { Switch } from 'antd';
-import React from 'react';
-import { JS_EXPRESSION } from '../utils';
+
+import './index.less';
 
 interface BoolSetterProps {
-  value: any;
-  defaultValue: boolean;
+  value: boolean;
+  disabled: boolean;
+  defaultValue: any;
   onChange: (val: boolean) => void;
 }
 
-const BoolSetter: React.FC<BoolSetterProps> = (props: BoolSetterProps) => {
-  const { value, defaultValue } = props;
-  const val = value === undefined ? defaultValue : value;
-  // 如果有变量绑定，则展示默认值
-  const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
 
-  const onChange = (e: any) => {
-    const { onChange } = props;
+export default function BoolSetter(props: BoolSetterProps) {
+  const { onChange, disabled, value, defaultValue } = props;
+
+  const onValueChange = (check: boolean) => {
     if (onChange) {
-      onChange(e);
+      onChange(check);
     }
   };
 
   return (
-    <Switch
-      checked={valueStr}
-      defaultChecked={defaultValue}
-      onChange={onChange}
-    />
+    <div className="ape-setter-switch">
+      <Switch
+        checked={typeof value === 'boolean' ? value : defaultValue}
+        disabled={disabled}
+        onChange={onValueChange}
+      />
+    </div>
   );
-};
-
-BoolSetter.displayName = 'BoolSetter';
-
-export default BoolSetter;
+}

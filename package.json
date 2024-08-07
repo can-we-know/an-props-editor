@@ -55,7 +55,8 @@
     "dayjs": "^1.11.11",
     "eventemitter3": "^5.0.1",
     "js-beautify": "^1.15.1",
-    "mobx": "^6.13.0"
+    "mobx": "^6.13.0",
+    "mobx-react-lite": "^4.0.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
