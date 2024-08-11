@@ -1,17 +1,17 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/default-props-match-prop-types */
-import * as React from 'react';
+import { ConfigProvider } from 'antd';
+import React, { useState } from 'react';
+import CssCode from './components/css-code';
+import Icon from './components/icon';
+import './index.less';
+import Background from './pro/background';
+import Border from './pro/border';
+import Font from './pro/font';
 import Layout from './pro/layout';
 import Position from './pro/position';
-import Font from './pro/font';
-import Border from './pro/border';
-import Background from './pro/background';
-import CssCode from './components/css-code';
-import { StyleData, StyleDataItem } from './utils/types';
-import Icon from './components/icon';
-import { ConfigProvider } from 'antd';
-import './index.less';
 import { parseToCssCode } from './utils';
+import { StyleData, StyleDataItem } from './utils/types';
 
 export interface StyleSetterProps {
   // defaultValue: string;
@@ -24,8 +24,8 @@ export interface StyleSetterProps {
   showModuleList?: ('background' | 'border' | 'font' | 'layout' | 'position')[];
 }
 
-export default class StyleSetterV2 extends React.PureComponent<StyleSetterProps, any> {
-  static defaultProps = {
+export default function StyleSetterV2(props: StyleSetterProps) {
+  const defaultProps = {
     // 默认单位
     unit: 'px',
     // 默认计算尺寸缩放
@@ -59,18 +59,11 @@ export default class StyleSetterV2 extends React.PureComponent<StyleSetterProps,
     },
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      cssCodeVisiable: false,
-      cssCode: parseToCssCode(props.value),
-    };
-  }
+  const [cssCodeVisiable, setCssCodeVisiable] = useState(false);
+  const [cssCode, setCssCode] = useState(parseToCssCode(props.value));
 
-  changeCssCodeVisiable = (visible: boolean) => () => {
-    this.setState({
-      cssCodeVisiable: visible,
-    });
+  const changeCssCodeVisiable = (visible: boolean) => () => {
+    setCssCodeVisiable(visible);
   };
 
   /**
@@ -78,10 +71,10 @@ export default class StyleSetterV2 extends React.PureComponent<StyleSetterProps,
    * @param styleKey
    * @param value
    */
-  onStyleChange = (styleDataList: StyleDataItem[]) => {
-    const { onChange, value } = this.props;
+  const onStyleChange = (styleDataList: StyleDataItem[]) => {
+    const { onChange, value } = props;
     const styleData: StyleData = Object.assign({}, value);
-    styleDataList &&
+    if (styleDataList) {
       styleDataList.forEach((item) => {
         if (item.value === undefined || item.value === null) {
           delete styleData[item.styleKey];
@@ -89,98 +82,99 @@ export default class StyleSetterV2 extends React.PureComponent<StyleSetterProps,
           styleData[item.styleKey] = item.value;
         }
       });
-    this.setState({
-      cssCode: parseToCssCode(styleData),
-    });
-    onChange && onChange(styleData);
+    }
+    setCssCode(parseToCssCode(styleData));
+    if (onChange) onChange(styleData);
   };
 
-  onStyleDataChange = (styleData: StyleData) => {
-    const { onChange } = this.props;
-    onChange && onChange(styleData);
+  const onStyleDataChange = (styleData: StyleData) => {
+    const { onChange } = props;
+    if (onChange) onChange(styleData);
   };
 
-  onCssCodeChange = (cssCode: string) => {
-    this.setState({
-      cssCode,
-    });
+  const onCssCodeChange = (cssCode: string) => {
+    setCssCode(cssCode);
   };
 
-  render() {
-    const { value: styleData = {}, isShowCssCode, showModuleList } = this.props;
-
-    const { cssCode } = this.state;
-    const showModuleMap: Record<string, boolean> = {};
-    showModuleList.forEach((key) => {
-      showModuleMap[key] = true;
-    });
-    const { cssCodeVisiable } = this.state;
-    return (
-      <ConfigProvider>
-        <div className="lowcode-setter-style-v2">
-          {isShowCssCode && (
-            <div className="top-bar">
-              <div
-                onClick={this.changeCssCodeVisiable(true)}
-                className={cssCodeVisiable ? 'top-icon-active' : 'top-icon'}
-              >
-                <Icon type="icon-CSS" className="top-bar-css-icon" />
-              </div>
+  const {
+    value: styleData = {},
+    isShowCssCode = defaultProps.isShowCssCode,
+    showModuleList = defaultProps.showModuleList,
+  } = props;
+  const showModuleMap: Record<string, boolean> = {};
+  showModuleList.forEach((key) => {
+    showModuleMap[key] = true;
+  });
+  return (
+    <ConfigProvider>
+      <div className="lowcode-setter-style-v2">
+        {isShowCssCode && (
+          <div className="top-bar">
+            <div
+              onClick={changeCssCodeVisiable(true)}
+              className={cssCodeVisiable ? 'top-icon-active' : 'top-icon'}
+            >
+              <Icon type="icon-CSS" className="top-bar-css-icon" />
             </div>
-          )}
+          </div>
+        )}
 
-          {showModuleMap.layout && (
-            <Layout
-              onStyleChange={this.onStyleChange}
-              styleData={styleData}
-              {...this.props}
-            />
-          )}
+        {showModuleMap.layout && (
+          <Layout
+            onStyleChange={onStyleChange}
+            styleData={styleData}
+            {...defaultProps}
+            {...props}
+          />
+        )}
 
-          {showModuleMap.font && (
-            <Font
-              onStyleChange={this.onStyleChange}
-              styleData={styleData}
-              {...this.props}
-            />
-          )}
+        {showModuleMap.font && (
+          <Font
+            onStyleChange={onStyleChange}
+            styleData={styleData}
+            {...defaultProps}
+            {...props}
+          />
+        )}
 
-          {showModuleMap.background && (
-            <Background
-              onStyleChange={this.onStyleChange}
-              styleData={styleData}
-              {...this.props}
-            />
-          )}
+        {showModuleMap.background && (
+          <Background
+            onStyleChange={onStyleChange}
+            styleData={styleData}
+            {...defaultProps}
+            {...props}
+          />
+        )}
 
-          {showModuleMap.position && (
-            <Position
-              onStyleChange={this.onStyleChange}
-              styleData={styleData}
-              {...this.props}
-            />
-          )}
+        {showModuleMap.position && (
+          <Position
+            onStyleChange={onStyleChange}
+            styleData={styleData}
+            {...defaultProps}
+            {...props}
+          />
+        )}
 
-          {showModuleMap.border && (
-            <Border
-              onStyleChange={this.onStyleChange}
-              styleData={styleData}
-              {...this.props}
-            />
-          )}
+        {showModuleMap.border && (
+          <Border
+            onStyleChange={onStyleChange}
+            styleData={styleData}
+            {...defaultProps}
+            {...props}
+          />
+        )}
 
-          {cssCodeVisiable && (
-            <CssCode
-              visible
-              styleData={styleData}
-              cssCode={cssCode}
-              onCssCodeChange={this.onCssCodeChange}
-              onStyleDataChange={this.onStyleDataChange}
-              changeCssCodeVisiable={this.changeCssCodeVisiable}
-            />
-          )}
-        </div>
-      </ConfigProvider>
-    );
-  }
+        {cssCodeVisiable && (
+          <CssCode
+            visible
+            styleData={styleData}
+            cssCode={cssCode}
+            onCssCodeChange={onCssCodeChange}
+            onStyleDataChange={onStyleDataChange}
+            changeCssCodeVisiable={changeCssCodeVisiable}
+          />
+        )}
+      </div>
+    </ConfigProvider>
+  );
 }

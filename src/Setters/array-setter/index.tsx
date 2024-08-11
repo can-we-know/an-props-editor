@@ -1,34 +1,27 @@
-import * as React from 'react';
-import { PureComponent } from 'react';
-import { Button, Alert } from 'antd';
-import ArrayItem from './array-item';
-import Sortable from './sortable';
-import ObjectSetterSection from './object-setter-section';
+import { getInitialValue, JS_JSON } from '@/common/utils';
+import { Alert, Button } from 'antd';
+import React, { useState } from 'react';
 import SetterMetaItemMap, { ErrorItem } from './array-content';
-import { getInitialValue, JS_JSON } from '../utils';
+import ArrayItem from './array-item';
 import './index.less';
+import ObjectSetterSection from './object-setter-section';
+import Sortable from './sortable';
 
 interface ArraySetterProps {
   value: any;
   // context: any; // 上下文环境
-  onChange?: Function;
+  onChange?: any;
   action: any;
   title: any;
   itemSetter: Record<any, any>;
   setterMap: Record<string, any>;
 }
 
-export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
-  private scrollToLast = false;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      drawerVisible: false,
-      curItem: {},
-      curIndex: 0,
-    };
-  }
+export default function ArraySetter(props: ArraySetterProps) {
+  const scrollToLast = false;
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [curItem, setCurItem] = useState({});
+  const [curIndex, setCurIndex] = useState(0);
 
   /**
    * onItemChange 用于 ArraySetter 的单个 index 下的数据发生变化，
@@ -37,17 +30,15 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
    * @param target
    * @param value
    */
-  onItemChange = (item, index) => () => {
-    this.setState({
-      drawerVisible: true,
-      curItem: item,
-      curIndex: index,
-    });
+  const onItemChange = (item, index) => () => {
+    setDrawerVisible(true);
+    setCurItem(item);
+    setCurIndex(index);
   };
 
-  onSort = (sortedIds: (string | number)[]) => {
-    const { onChange, value } = this.props;
-    const list = (value && value.type === JS_JSON) ? value.value : value;
+  const onSort = (sortedIds: (string | number)[]) => {
+    const { onChange, value } = props;
+    const list = value && value.type === JS_JSON ? value.value : value;
     const _value = [];
     sortedIds.forEach((id, index) => {
       const item = list[+id];
@@ -63,8 +54,8 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
     }
   };
 
-  onAdd = () => {
-    const { itemSetter, value = [], onChange } = this.props;
+  const onAdd = () => {
+    const { itemSetter, value = [], onChange } = props;
     const { initialValue } = itemSetter || {};
     const defaultValue = getInitialValue(initialValue);
 
@@ -81,8 +72,8 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
     }
   };
 
-  onRemove = (removed, id) => () => {
-    const { onChange, value } = this.props;
+  const onRemove = (removed, id) => () => {
+    const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
       value.value.splice(id, 1);
       onChange({
@@ -92,15 +83,12 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
     }
   };
 
-  onDrawerClose = () => {
-    this.setState({
-      drawerVisible: false,
-    });
+  const onDrawerClose = () => {
+    setDrawerVisible(false);
   };
 
-  onItemValueChange = (val) => {
-    const { curIndex } = this.state;
-    const { onChange, value } = this.props;
+  const onItemValueChange = (val) => {
+    const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
       const list = value.value;
       list[curIndex] = val;
@@ -109,14 +97,12 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
         value: [...list],
       });
     }
-    const curValue = (value && value.type) ? value.value : value;
-    this.setState({
-      curItem: (curValue || {})[curIndex],
-    });
+    const curValue = value && value.type ? value.value : value;
+    setCurItem((curValue || {})[curIndex]);
   };
 
-  onItemBaseDataChange = (curIndex) => (val) => {
-    const { onChange, value } = this.props;
+  const onItemBaseDataChange = (curIndex) => (val) => {
+    const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
       const list = value.value;
       list[curIndex] = val;
@@ -127,49 +113,63 @@ export default class ArraySetter extends PureComponent<ArraySetterProps, any> {
     }
   };
 
-  render() {
-    const { value = [], title, action, itemSetter, setterMap } = this.props;
-    const { scrollToLast } = this;
-    const lastIndex = value.length - 1;
-    const { drawerVisible, curItem, curIndex } = this.state;
-    const list = (value && value.type === JS_JSON) ? value.value : (value || []);
-    const ArrayItemContent = SetterMetaItemMap[itemSetter.componentName] || ErrorItem;
-    return (
-      <div className="ape-setter-array-field">
-        <div className="ape-setter-array-field-head" >
-          {title}
-          {action}
-        </div>
-        <div className="ape-setter-array-field-body">
-          {
-            list.length > 0
-              ? (
-                <>
-                  <Sortable itemClassName="ape-setter-array-list-card" onSort={this.onSort}>
-                    {list.map((item, index) => (
-                      <ArrayItem
-                        key={index}
-                        content={<ArrayItemContent value={list[index]} onChange={this.onItemBaseDataChange(index)} index={index} onItemChange={this.onItemChange(item, index)} {...itemSetter} />}
-                        scrollIntoView={scrollToLast && index === lastIndex}
-                        data={item}
-                        index={index}
-                        itemSetter={itemSetter}
-                        onRemove={this.onRemove(item, index)}
-                      />
-                    ))}
-                  </Sortable>
-                </>
-              )
-              : <Alert type="info" showIcon message="当前项目为空" />
-          }
-          <div className="ape-setter-array-list-add">
-            <Button onClick={this.onAdd}>
-              <span>+ 添加一项</span>
-            </Button>
-          </div>
-        </div>
-        <ObjectSetterSection setterMap={setterMap} onChange={this.onItemValueChange} value={curItem} index={curIndex} visible={drawerVisible} itemSetter={itemSetter} onClose={this.onDrawerClose} />
+  const { value = [], title, action, itemSetter, setterMap } = props;
+  const lastIndex = value.length - 1;
+  const list = value && value.type === JS_JSON ? value.value : value || [];
+  const ArrayItemContent =
+    SetterMetaItemMap[itemSetter.componentName] || ErrorItem;
+  return (
+    <div className="ape-setter-array-field">
+      <div className="ape-setter-array-field-head">
+        {title}
+        {action}
       </div>
-    );
-  }
+      <div className="ape-setter-array-field-body">
+        {list.length > 0 ? (
+          <>
+            <Sortable
+              itemClassName="ape-setter-array-list-card"
+              onSort={onSort}
+            >
+              {list.map((item, index) => (
+                <ArrayItem
+                  key={index}
+                  content={
+                    <ArrayItemContent
+                      value={list[index]}
+                      onChange={onItemBaseDataChange(index)}
+                      index={index}
+                      onItemChange={onItemChange(item, index)}
+                      {...itemSetter}
+                    />
+                  }
+                  scrollIntoView={scrollToLast && index === lastIndex}
+                  data={item}
+                  index={index}
+                  itemSetter={itemSetter}
+                  onRemove={onRemove(item, index)}
+                />
+              ))}
+            </Sortable>
+          </>
+        ) : (
+          <Alert type="info" showIcon message="当前项目为空" />
+        )}
+        <div className="ape-setter-array-list-add">
+          <Button onClick={onAdd}>
+            <span>+ 添加一项</span>
+          </Button>
+        </div>
+      </div>
+      <ObjectSetterSection
+        setterMap={setterMap}
+        onChange={onItemValueChange}
+        value={curItem}
+        index={curIndex}
+        visible={drawerVisible}
+        itemSetter={itemSetter}
+        onClose={onDrawerClose}
+      />
+    </div>
+  );
 }

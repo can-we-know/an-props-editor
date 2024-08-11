@@ -1,5 +1,5 @@
-import React, { Component, Children, ReactElement } from 'react';
 import classNames from 'classnames';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import './sortable.less';
 
 export interface SortablePropsType {
@@ -11,14 +11,11 @@ export interface SortablePropsType {
 }
 
 export default function Sortable(props: SortablePropsType) {
-  private shell?: HTMLDivElement | null;
+  const shell = useRef<HTMLDivElement | null>(null);
+  const items = useRef<(string | number)[]>([]);
 
-  private items?: (string | number)[];
-
-  private willDetach?: () => void;
-
-  componentDidMount() {
-    const box = this.shell;
+  useEffect(() => {
+    const box = shell.current;
 
     let isDragEnd = false;
 
@@ -84,21 +81,22 @@ export default function Sortable(props: SortablePropsType) {
       if (!source) return;
 
       const sourceId = (source as HTMLDivElement).dataset.id;
-      const { items } = this;
-      const origIndex = items.findIndex((id) => id == sourceId);
+      const origIndex = items.current.findIndex((id) => id === sourceId);
 
-      let newIndex = beforeId ? items.findIndex((id) => id == beforeId) : items.length;
+      let newIndex = beforeId
+        ? items.current.findIndex((id) => id === beforeId)
+        : items.current.length;
 
       if (origIndex < 0 || newIndex < 0) return;
-      if (this.props.onSort) {
+      if (props.onSort) {
         if (newIndex > origIndex) {
           newIndex -= 1;
         }
         if (origIndex === newIndex) return;
-        const item = items.splice(origIndex, 1);
-        items.splice(newIndex, 0, item[0]);
+        const item = items.current.splice(origIndex, 1);
+        items.current.splice(newIndex, 0, item[0]);
 
-        this.props.onSort(items);
+        props.onSort(items.current);
       }
     };
 
@@ -111,11 +109,15 @@ export default function Sortable(props: SortablePropsType) {
       origRef = source.nextElementSibling;
       const rect = source.getBoundingClientRect();
       let dragSource = source;
-      if (this.props.dragImageSourceHandler) {
-        dragSource = this.props.dragImageSourceHandler(source);
+      if (props.dragImageSourceHandler) {
+        dragSource = props.dragImageSourceHandler(source);
       }
       if (e.dataTransfer) {
-        e.dataTransfer.setDragImage(dragSource, e.clientX - rect.left, e.clientY - rect.top);
+        e.dataTransfer.setDragImage(
+          dragSource,
+          e.clientX - rect.left,
+          e.clientY - rect.top,
+        );
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.dropEffect = 'move';
         try {
@@ -152,7 +154,10 @@ export default function Sortable(props: SortablePropsType) {
       if (!source) return;
       e.preventDefault();
       if (lastDragEvent) {
-        if (lastDragEvent.clientX === e.clientX && lastDragEvent.clientY === e.clientY) {
+        if (
+          lastDragEvent.clientX === e.clientX &&
+          lastDragEvent.clientY === e.clientY
+        ) {
           return;
         }
       }
@@ -181,45 +186,41 @@ export default function Sortable(props: SortablePropsType) {
     document.addEventListener('drag', drag);
     document.addEventListener('dragend', dragend);
 
-    this.willDetach = () => {
+    return () => {
       box.removeEventListener('dragstart', dragstart);
       document.removeEventListener('dragover', drag);
       document.removeEventListener('drag', drag);
       document.removeEventListener('dragend', dragend);
     };
-  }
+  }, [props.dragImageSourceHandler, props.onSort]);
 
-  componentWillUnmount() {
-    if (this.willDetach) {
-      this.willDetach();
-    }
-  }
-
-  getShellNode = (ref) => {
-    this.shell = ref;
+  const getShellNode = (ref) => {
+    shell.current = ref;
   };
 
-  render() {
-    const { className, itemClassName, children } = this.props;
-    const items: (string | number)[] = [];
-    const cards = Children.map(children, (child) => {
-      const { key: id } = child as ReactElement<{key: string }>;
-      items.push(id);
-      return (
-        <div key={id} data-id={id} className={classNames('ape-setter-sortable-card', itemClassName)}>
-          {child}
-        </div>
-      );
-    });
-    this.items = items;
-
+  const { className, itemClassName, children } = props;
+  const newitems: (string | number)[] = [];
+  const cards = React.Children.map(children, (child) => {
+    const { key: id } = child as ReactElement<{ key: string }>;
+    newitems.push(id);
     return (
       <div
-        className={classNames('ape-setter-sortable', className)}
-        ref={this.getShellNode}
+        key={id}
+        data-id={id}
+        className={classNames('ape-setter-sortable-card', itemClassName)}
       >
-        {cards}
+        {child}
       </div>
     );
-  }
+  });
+  items.current = newitems;
+
+  return (
+    <div
+      className={classNames('ape-setter-sortable', className)}
+      ref={getShellNode}
+    >
+      {cards}
+    </div>
+  );
 }

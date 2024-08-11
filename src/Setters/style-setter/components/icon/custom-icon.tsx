@@ -1,9 +1,9 @@
-import { Icon } from 'antd';
+import { createFromIconfontCN } from '@ant-design/icons';
 import * as React from 'react';
 
 const ICON_URL = '//at.alicdn.com/t/font_2761185_gdpwg9vnz7.js';
 
-const CustomIcon = Icon.createFromIconfontCN({
+const CustomIcon = createFromIconfontCN({
   scriptUrl: ICON_URL,
 });
 
@@ -23,16 +23,16 @@ const CustomIcon = Icon.createFromIconfontCN({
 interface IconProps {
   type: string;
   size?:
-  | number
-  | 'small'
-  | 'xxs'
-  | 'xs'
-  | 'medium'
-  | 'large'
-  | 'xl'
-  | 'xxl'
-  | 'xxxl'
-  | 'inherit';
+    | number
+    | 'small'
+    | 'xxs'
+    | 'xs'
+    | 'medium'
+    | 'large'
+    | 'xl'
+    | 'xxl'
+    | 'xxxl'
+    | 'inherit';
   className?: string;
   style?: any;
 }

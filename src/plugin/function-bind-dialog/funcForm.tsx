@@ -1,9 +1,10 @@
-import React, { Component, forwardRef, LegacyRef } from 'react';
-import { Input, Form } from 'antd';
-import MonacoEditor from '../../component/monaco-editor';
+import MonacoEditor from '@/components/monaco-editor';
+import { Form, Input } from 'antd';
+import React, { forwardRef, LegacyRef, useEffect } from 'react';
 import './index.less';
 
-const DEFAULT_FUNC_PARAMS = 'function funcName() {\n    // 可以直接调用上下文函数\n    // this.setData({});\n}';
+const DEFAULT_FUNC_PARAMS =
+  'function funcName() {\n    // 可以直接调用上下文函数\n    // this.setData({});\n}';
 const formItemStyle: React.CSSProperties = {
   // marginBottom: 8,
   // marginLeft: 0,
@@ -38,82 +39,74 @@ const MonacoEditorWithRef = forwardRef((props: any, ref) => (
   </div>
 ));
 
-class NewFunctComp extends Component<any> {
-  time = null;
+export default function NewFunctComp(props: any) {
+  const [form] = Form.useForm();
 
-  componentDidMount() {
-    const { curMethod } = this.props;
+  useEffect(() => {
+    const { curMethod } = props;
     if (curMethod) {
-      this.setFormValues(curMethod);
+      setFormValues(curMethod);
     }
-  }
+  }, []);
 
-  getFormValues = (): Promise<{ funcName: string; funcBody: string }> => {
-    return new Promise((resolve, reject) => {
-      const { validateFields, getFieldsValue } = this.props.form;
-      validateFields(null, {}, (error, values) => {
-        if (!error) {
-          resolve(values);
-        }
-        reject(error);
-      });
-    });
+  const getFormValues = async () => {
+    const values = await form.validateFields();
+    return values;
   };
 
-  setFormValues = (curMethod: { methodName: string; methodBody: string }) => {
-    const { setFieldsValue } = this.props.form;
+  const setFormValues = (curMethod: {
+    methodName: string;
+    methodBody: string;
+  }) => {
     if (curMethod.methodName && curMethod.methodBody) {
-      setFieldsValue({
+      form.setFieldsValue({
         funcName: curMethod.methodName,
         funcBody: curMethod.methodBody,
       });
     }
   };
 
-  clearFromValues = () => {
-    const { setFieldsValue } = this.props.form;
-    setFieldsValue({
+  const clearFromValues = () => {
+    form.setFieldsValue({
       funcName: null,
       funcBody: DEFAULT_FUNC_PARAMS,
     });
   };
 
-  render() {
-    const { isEdit, initialValue } = this.props;
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form style={{ padding: '16px 0' }} labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
-        <Form.Item label="名称" required style={formItemStyle}>
-          {getFieldDecorator('funcName', {
-            initialValue: '',
-            rules: [
-              { required: true, message: '名称不能为空' },
-              { pattern: /^([a-z]|\$)([a-zA-Z0-9_])*$/, message: '函数名称不规范' },
-            ],
-          })(<Input placeholder="请输入函数名称" disabled={isEdit} />)}
-        </Form.Item>
-        <Form.Item label="函数" required style={formItemStyle}>
-          {getFieldDecorator('funcBody', {
-            initialValue: initialValue || DEFAULT_FUNC_PARAMS,
-            rules: [
-              { required: true, message: '函数不能为空' },
-            ],
-          })(
-            <MonacoEditorWithRef
-              {...defaultEditorOption}
-              language="javascript"
-              theme="vs-dark"
-              width="100%"
-              height={280}
-            />
-          )}
-        </Form.Item>
-      </Form>
-    );
-  }
+  const { isEdit, initialValue } = props;
+  return (
+    <Form
+      form={form}
+      style={{ padding: '16px 0' }}
+      labelCol={{ span: 2 }}
+      wrapperCol={{ span: 22 }}
+    >
+      <Form.Item
+        label="名称"
+        name="funcName"
+        rules={[
+          { required: true, message: '名称不能为空' },
+          { pattern: /^([a-z]|\$)([a-zA-Z0-9_])*$/, message: '函数名称不规范' },
+        ]}
+        style={formItemStyle}
+      >
+        <Input placeholder="请输入函数名称" disabled={isEdit} />
+      </Form.Item>
+      <Form.Item
+        label="函数"
+        name="funcBody"
+        initialValue={initialValue || DEFAULT_FUNC_PARAMS}
+        rules={[{ required: true, message: '函数不能为空' }]}
+        style={formItemStyle}
+      >
+        <MonacoEditorWithRef
+          {...defaultEditorOption}
+          language="javascript"
+          theme="vs-dark"
+          width="100%"
+          height={280}
+        />
+      </Form.Item>
+    </Form>
+  );
 }
-
-export default Form.create({
-  onFieldsChange: (props, changeFields, allFields) => {
-  },
-})(NewFunctComp) as any;

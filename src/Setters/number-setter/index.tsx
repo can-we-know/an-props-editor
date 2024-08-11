@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { InputNumber } from 'antd';
 import { JS_EXPRESSION } from '@/common/utils';
+import { InputNumber } from 'antd';
+import * as React from 'react';
 import './index.less';
 
 interface NumberSetterProps {
@@ -14,11 +14,10 @@ interface NumberSetterProps {
 }
 
 export default function NumberSetter(props: NumberSetterProps) {
-
   const onChange = (val: any) => {
     const { onChange, units } = props;
     const value = units ? `${val}${units}` : val;
-    onChange(value);
+    if (onChange) onChange(value);
   };
 
   const numberFormatter = (value: any) => {
@@ -49,7 +48,7 @@ export default function NumberSetter(props: NumberSetterProps) {
   } = props;
   // 如果有变量绑定，则展示默认值
   const val = value === undefined ? defaultValue : value;
-  const valueStr = (value && value.type === JS_EXPRESSION) ? defaultValue : val;
+  const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
   return (
     <div className="ape-setter-number">
       <InputNumber

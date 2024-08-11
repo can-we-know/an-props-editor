@@ -1,11 +1,11 @@
-import React, { PureComponent } from 'react';
+import InlineItem from '@/components/inline-item';
 import { Drawer } from 'antd';
 import { observer } from 'mobx-react';
-import InlineItem from '../inline-item';
+import React from 'react';
 
-class ObjectSetterSection extends PureComponent<any, any> {
-  onValueChange = (item) => (val) => {
-    const { onChange, value } = this.props;
+export default observer(function ObjectSetterSection(props: any) {
+  const onValueChange = (item) => (val) => {
+    const { onChange, value } = props;
     const { name } = item;
     if (value) {
       onChange({
@@ -19,27 +19,39 @@ class ObjectSetterSection extends PureComponent<any, any> {
     }
   };
 
-  render() {
-    const { itemSetter, setterMap, value = {}, index, visible = false, onClose } = this.props;
-    const { items = [] } = itemSetter?.props?.config || {};
-    return (
-      <Drawer
-        title={`项目${index}`}
-        placement="right"
-        onClose={onClose}
-        visible={visible}
-        mask={false}
-        width={visible ? 360 : 0}
-        destroyOnClose
-        style={{ right: 360 }}
-      >
-        <div className="ape-setter-object-section">
-          <div className="ape-setter-object-section-body">
-            { items.map(item => <InlineItem setterMap={setterMap} value={value[item.name]} onChange={this.onValueChange(item)} metaInfo={item} key={item.name} />) }
-          </div>
+  const {
+    itemSetter,
+    setterMap,
+    value = {},
+    index,
+    visible = false,
+    onClose,
+  } = props;
+  const { items = [] } = itemSetter?.props?.config || {};
+  return (
+    <Drawer
+      title={`项目${index}`}
+      placement="right"
+      onClose={onClose}
+      open={visible}
+      mask={false}
+      width={visible ? 360 : 0}
+      destroyOnClose
+      style={{ right: 360 }}
+    >
+      <div className="ape-setter-object-section">
+        <div className="ape-setter-object-section-body">
+          {items.map((item) => (
+            <InlineItem
+              setterMap={setterMap}
+              value={value[item.name]}
+              onChange={onValueChange(item)}
+              metaInfo={item}
+              key={item.name}
+            />
+          ))}
         </div>
-      </Drawer>);
-  }
-}
-
-export default observer(ObjectSetterSection);
+      </div>
+    </Drawer>
+  );
+});

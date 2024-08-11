@@ -1,5 +1,6 @@
 import AnPropsEditor from './editor';
 export { default as MonacoEditor } from './components/monaco-editor';
+export { default as ArraySetter } from './setters/array-setter';
 export { default as BoolSetter } from './setters/bool-setter';
 export { default as ClassNameSetter } from './setters/classname-setter';
 export { default as ColorSetter } from './setters/color-setter';
@@ -7,6 +8,7 @@ export { default as DateSetter } from './setters/date-setter';
 export { default as DateMonthSetter } from './setters/datemonth-setter';
 export { default as DateRangeSetter } from './setters/daterange-setter';
 export { default as DateYearSetter } from './setters/dateyear-setter';
+export { default as EventsSetter } from './setters/events-setter';
 export { default as FunctionSetter } from './setters/function-setter';
 export { default as IconSetter } from './setters/icon-setter';
 export { default as JsonSetter } from './setters/json-setter';
@@ -15,7 +17,9 @@ export { default as RadioGroupSetter } from './setters/radiogroup-setter';
 export { default as SelectSetter } from './setters/select-setter';
 export { default as SlotSetter } from './setters/slot-setter';
 export { default as StringSetter } from './setters/string-setter';
+export { default as StyleSetter } from './setters/style-setter';
 export { default as TextAreaSetter } from './setters/textarea-setter';
 export { default as TitleSetter } from './setters/title-setter';
+export { default as VariableSetter } from './setters/variable-setter';
 
 export default AnPropsEditor;

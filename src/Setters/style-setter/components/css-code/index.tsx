@@ -1,8 +1,8 @@
-import React, { PureComponent } from 'react';
+import MonacoEditor from '@/components/monaco-editor';
 import { Drawer } from 'antd';
+import React from 'react';
+import { isSameStayleData, parseToStyleData } from '../../utils';
 import { StyleData } from '../../utils/types';
-import { parseToStyleData, isSameStayleData } from '../../utils';
-import MonacoEditor from '../../../monaco-editor';
 
 interface CodeProps {
   visible: boolean;
@@ -34,44 +34,42 @@ const defaultEditorOption = {
   },
 };
 
-export default class CssCode extends PureComponent<CodeProps> {
-  updateCode = (newCode: string) => {
-    const { onStyleDataChange, styleData, onCssCodeChange } = this.props;
+export default function CssCode(props: CodeProps) {
+  const updateCode = (newCode: string) => {
+    const { onStyleDataChange, styleData, onCssCodeChange } = props;
     onCssCodeChange(newCode);
     const newStyleData = parseToStyleData(newCode);
     // 检查是否和原来的styleData完全相同
     if (isSameStayleData(newStyleData, styleData)) {
       return;
     }
-    newStyleData && onStyleDataChange(newStyleData);
+    if (newStyleData) onStyleDataChange(newStyleData);
   };
 
-  render() {
-    const { visible, changeCssCodeVisiable, cssCode } = this.props;
-    return (
-      <Drawer
-        width={360}
-        visible={visible}
-        destroyOnClose
-        mask={false}
-        title="css源码编辑"
-        onClose={changeCssCodeVisiable(false)}
-        style={{ right: 360 }}
-      >
-        <MonacoEditor
-          value={cssCode}
-          width={318}
-          height={document.body.clientHeight - 90}
-          language="css"
-          options={{
-            minimap: {
-              enabled: false,
-            },
-            ...defaultEditorOption,
-          }}
-          onChange={this.updateCode}
-        />
-      </Drawer>
-    );
-  }
+  const { visible, changeCssCodeVisiable, cssCode } = props;
+  return (
+    <Drawer
+      width={360}
+      visible={visible}
+      destroyOnClose
+      mask={false}
+      title="css源码编辑"
+      onClose={changeCssCodeVisiable(false)}
+      style={{ right: 360 }}
+    >
+      <MonacoEditor
+        value={cssCode}
+        width={318}
+        height={document.body.clientHeight - 90}
+        language="css"
+        options={{
+          minimap: {
+            enabled: false,
+          },
+          ...defaultEditorOption,
+        }}
+        onChange={updateCode}
+      />
+    </Drawer>
+  );
 }

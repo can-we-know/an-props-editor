@@ -1,7 +1,13 @@
-import React, { ElementType, useState, useMemo, SyntheticEvent, ChangeEvent } from 'react';
-import { Input, Radio, Popover, RadioChangeEvent } from 'antd';
 import * as antdIcons from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Input, Popover, Radio, RadioChangeEvent } from 'antd';
+import React, {
+  ChangeEvent,
+  ElementType,
+  SyntheticEvent,
+  useMemo,
+  useState,
+} from 'react';
 
 import './index.less';
 
@@ -16,7 +22,6 @@ const IconGroupNameMap: Record<IconGroup, string> = {
   iconfont: 'Iconfont',
 };
 
-
 function getIconfontIconList() {
   // iconfont的js会在页面中添加svg元素
   const symbols = Array.prototype.slice.call(
@@ -27,7 +32,7 @@ function getIconfontIconList() {
 
   // const Icon = antdIcons.createFromIconfontCN();
 
-  return symbols.map(symbol => {
+  return symbols.map((symbol) => {
     const { id } = symbol;
     return {
       name: id,
@@ -48,14 +53,14 @@ function getIconfontIconList() {
 }
 
 interface IconInfoType {
-  name: string,
-  group: keyof typeof IconGroupNameMap,
-  icon: ElementType,
+  name: string;
+  group: keyof typeof IconGroupNameMap;
+  icon: ElementType;
 }
 
 function getAntdIconList(): IconInfoType[] {
   return Object.keys(antdIcons)
-    .map(key => {
+    .map((key) => {
       const item = (antdIcons as any)[key];
 
       if (typeof item !== 'object') {
@@ -112,34 +117,46 @@ interface IconSetterProps {
 }
 
 export default function IconSetter(props: IconSetterProps) {
-  const { iconsMap: icons, curGroup: currentGroup, _groups: groups, selected: initSelectedGroup } = useMemo(() => {
+  const {
+    iconsMap: icons,
+    curGroup: currentGroup,
+    _groups: groups,
+    selected: initSelectedGroup,
+  } = useMemo(() => {
     const iconList = getIconList();
     const _groups: { group: IconGroup; list: any[] }[] = [];
     const iconsMap: any = {};
-    iconList.forEach(item => {
+    iconList.forEach((item) => {
       const { group } = item || {};
-      if (_groups.every(ele => ele.group !== group)) {
+      if (_groups.every((ele) => ele.group !== group)) {
         _groups.push({ group: group as IconGroup, list: [] });
       }
-      const target = _groups.find(ele => ele.group === group);
+      const target = _groups.find((ele) => ele.group === group);
       target?.list?.push(item);
       iconsMap[item.name] = item?.icon;
     });
     const selected = _groups[0]?.group;
-    const curGroup = _groups.find(item => item.group === selected);
+    const curGroup = _groups.find((item) => item.group === selected);
     return {
       iconsMap,
       curGroup,
       selected,
       _groups,
-    }
+    };
   }, []);
 
-  const [ search, setSearch ] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
   const [list, setList] = useState<IconInfoType[]>(currentGroup?.list || []);
   const [selectedGroup, setSelectGroup] = useState<string>(initSelectedGroup);
-  
-  const { hasClear = false, placeholder='请点击选择 Icon', metaInfo, onChange, value, defaultValue } = props;
+
+  const {
+    hasClear = false,
+    placeholder = '请点击选择 Icon',
+    metaInfo,
+    onChange,
+    value,
+    defaultValue,
+  } = props;
 
   const handleChange = (val: string) => () => {
     const { propType } = metaInfo || {};
@@ -157,8 +174,8 @@ export default function IconSetter(props: IconSetterProps) {
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value;
-    const curGroup = groups.find(item => item.group === selectedGroup);
-    const result = (curGroup?.list || []).filter(item => {
+    const curGroup = groups.find((item) => item.group === selectedGroup);
+    const result = (curGroup?.list || []).filter((item) => {
       return search
         ? item.name.toLowerCase().indexOf((search as string).toLowerCase()) > -1
         : true;
@@ -169,8 +186,8 @@ export default function IconSetter(props: IconSetterProps) {
 
   const onTabChange = (e: RadioChangeEvent) => {
     const selectedGroup = e.target.value;
-    const currentGroup = groups.find(item => item.group === selectedGroup);
-    const list = (currentGroup?.list || []).filter(item => {
+    const currentGroup = groups.find((item) => item.group === selectedGroup);
+    const list = (currentGroup?.list || []).filter((item) => {
       return search
         ? item.name.toLowerCase().indexOf((search as string).toLowerCase()) > -1
         : true;
@@ -194,7 +211,7 @@ export default function IconSetter(props: IconSetterProps) {
             value={selectedGroup}
             onChange={onTabChange}
           >
-            {groups.map(item => (
+            {groups.map((item) => (
               <Radio.Button key={item.group} value={item.group}>
                 {IconGroupNameMap[item.group]}
               </Radio.Button>
@@ -207,7 +224,7 @@ export default function IconSetter(props: IconSetterProps) {
         </div>
         <div className="ape-icon-content-content">
           <ul className="ape-icon-content-list">
-            {list.map(item => (
+            {list.map((item) => (
               <li
                 key={item.name}
                 className="ape-icon-content-list-item"
@@ -221,7 +238,8 @@ export default function IconSetter(props: IconSetterProps) {
             ))}
           </ul>
         </div>
-      </div>);
+      </div>
+    );
   };
 
   const onClearClick = (e: SyntheticEvent) => {
@@ -230,14 +248,13 @@ export default function IconSetter(props: IconSetterProps) {
     handleChange('');
   };
 
-  const currentIcon = (<Icon type={value} icons={icons} style={{ fontSize: 16 }} />);
-  const clearIcon = hasClear && (<DeleteOutlined onClick={onClearClick} />);
+  const currentIcon = (
+    <Icon type={value} icons={icons} style={{ fontSize: 16 }} />
+  );
+  const clearIcon = hasClear && <DeleteOutlined onClick={onClearClick} />;
   return (
     <div className="ape-icon-setter">
-      <Popover
-        placement="leftTop"
-        content={renderContent()}
-      >
+      <Popover placement="leftTop" content={renderContent()}>
         <Input
           placeholder={placeholder}
           addonBefore={currentIcon}

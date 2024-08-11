@@ -4,7 +4,7 @@ export interface StyleData {
 
 export interface StyleDataItem {
   styleKey: string;
-  value: string | number | boolean;
+  value: string | number | boolean | null;
 }
 
 export interface RadioItem {

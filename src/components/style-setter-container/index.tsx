@@ -1,27 +1,30 @@
-import React, { PureComponent } from 'react';
-import { observer } from 'mobx-react';
-import { runInAction } from 'mobx';
+import { JS_EXPRESSION, JS_JSON } from '@/common/utils';
 import { Tooltip } from 'antd';
-import { JS_EXPRESSION, JS_JSON } from '../utils';
+import { runInAction } from 'mobx';
+import { observer } from 'mobx-react';
+import React from 'react';
 import StyleSetter from '../../setters/style-setter';
 import Title from '../title';
 import VariableIcon from '../variable-icon';
 import './index.less';
 
-
 // interface StyleSetterProps {
 
 // }
 
-class StyleSetterContainer extends PureComponent<any, any> {
-  onVariableBindClick = () => {
-    const { store = {} } = this.props;
+export default observer(function StyleSetterContainer(props: any) {
+  const onVariableBindClick = () => {
+    const { store = {} } = props;
     const { apePropsPanel } = window as any;
-    apePropsPanel.emit('variableBindDialog.openDialog', { pageState: apePropsPanel.pageState, onChange: this.onStyleChange, value: store.style || {} });
+    apePropsPanel.emit('variableBindDialog.openDialog', {
+      pageState: apePropsPanel.pageState,
+      onChange: onStyleChange,
+      value: store.style || {},
+    });
   };
 
-  onStyleChange = (val) => {
-    const { name, store = {} } = this.props;
+  const onStyleChange = (val) => {
+    const { name, store = {} } = props;
     runInAction(() => {
       if (name === 'style') {
         store[name] = val;
@@ -34,30 +37,35 @@ class StyleSetterContainer extends PureComponent<any, any> {
     });
   };
 
-  render() {
-    const { title, name = 'style', store = {} } = this.props;
-    let value = store[name] || {};
-    if (value && value.type === JS_JSON) {
-      value = value.value;
-    }
-    const isVariableBind = value && value.type === JS_EXPRESSION;
-    return (
-      <div className="ape-block-field">
-        <div className="ape-block-field-head">
-          {title ? <Title title={title} /> : '行内样式'}
-          <Tooltip title="变量绑定">
-            <div className={`ape-block-field-action${isVariableBind ? ' ape-inline-field-action-active' : ''}`}>
-              <span onClick={this.onVariableBindClick} >
-                <VariableIcon />
-              </span>
-            </div>
-          </Tooltip>
-        </div>
-        <div className="ape-block-field-body" >
-          <StyleSetter unit="px" value={isVariableBind ? {} : value} onChange={this.onStyleChange} />
-        </div>
-      </div>);
+  const { title, name = 'style', store = {} } = props;
+  let value = store[name] || {};
+  if (value && value.type === JS_JSON) {
+    value = value.value;
   }
-}
-
-export default observer(StyleSetterContainer);
+  const isVariableBind = value && value.type === JS_EXPRESSION;
+  return (
+    <div className="ape-block-field">
+      <div className="ape-block-field-head">
+        {title ? <Title title={title} /> : '行内样式'}
+        <Tooltip title="变量绑定">
+          <div
+            className={`ape-block-field-action${
+              isVariableBind ? ' ape-inline-field-action-active' : ''
+            }`}
+          >
+            <span onClick={onVariableBindClick}>
+              <VariableIcon />
+            </span>
+          </div>
+        </Tooltip>
+      </div>
+      <div className="ape-block-field-body">
+        <StyleSetter
+          unit="px"
+          value={isVariableBind ? {} : value}
+          onChange={onStyleChange}
+        />
+      </div>
+    </div>
+  );
+});
