@@ -1,6 +1,6 @@
 import { Menu, Radio, Table } from 'antd';
 import { runInAction } from 'mobx';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import React, { ReactChild, ReactFragment, ReactPortal, useState } from 'react';
 // import nativeEvents from './native-events';
 import { JS_FUNCTION } from '@/common/utils';

@@ -1,7 +1,7 @@
 import { JS_EXPRESSION, JS_JSON } from '@/common/utils';
 import { Tooltip } from 'antd';
 import { runInAction } from 'mobx';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import StyleSetter from '../../setters/style-setter';
 import Title from '../title';

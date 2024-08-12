@@ -1,6 +1,6 @@
 import InlineItem from '@/components/inline-item';
 import { Drawer } from 'antd';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 export default observer(function ObjectSetterSection(props: any) {
