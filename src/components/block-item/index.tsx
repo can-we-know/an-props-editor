@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { runInAction } from 'mobx';
 import InlineItem from '../inline-item';
 import EntryItem from '../entry-item';
-// import StyleSetterContainer from '../style-setter-container';
+import StyleSetterContainer from '../style-setter-container';
 import { PropType, DisplayType, PropsInfoType } from '../../types';
 import { PropsItemPropsType } from '../..//types/props-item';
 import Title from '../title';
@@ -26,9 +26,10 @@ const BlockItem = observer((props: PropsItemPropsType) => {
   };
   const { metaInfo, setterMap, value = {} } = props;
   const { items = [], type, title } = metaInfo || {};
-  // if (metaInfo && metaInfo.setter === 'StyleSetter') {
-  //   return <StyleSetterContainer title={metaInfo.title} name={metaInfo.name} store={value} />;
-  // }
+
+  if (metaInfo && metaInfo.setter === 'StyleSetter') {
+    return <StyleSetterContainer title={metaInfo.title} name={metaInfo.name} store={value} />;
+  }
   return (
     <div className="ape-block-field">
       <div className="ape-block-field-head">

@@ -42,14 +42,14 @@ export default (props: PositionBoxProps) => {
 
   const onInputKeyDown = (key: string, styleKey: string) => {
     const value = styleData[styleKey] || 0;
-    if (key == KEY_ARROW_DOWN) {
+    if (key === KEY_ARROW_DOWN) {
       onStyleChange([
         {
           styleKey,
           value: addUnit(parseInt(value) - 1, unit),
         },
       ]);
-    } else if (key == KEY_ARROW_UP) {
+    } else if (key === KEY_ARROW_UP) {
       onStyleChange([
         {
           styleKey,

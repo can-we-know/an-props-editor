@@ -10,27 +10,22 @@ export default function ArrayItem(props: {
   itemSetter: Record<string, any>;
   scrollIntoView: boolean;
 }) {
-  const shell = useRef<HTMLDivElement | null>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (props.scrollIntoView && shell.current) {
-      shell.current.parentElement.scrollIntoView({
+    if (props.scrollIntoView && shellRef.current) {
+      shellRef.current.parentElement?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
     }
   }, []);
 
-  const getShellNode = (ref) => {
-    shell.current = ref;
-  };
-
   const { onRemove, content } = props;
   return (
     <div
       className="ape-setter-array-list-item"
-      // @es-ignore
-      ref={getShellNode}
+      ref={shellRef}
     >
       <div className="ape-setter-array-list-item-actions">
         <Button

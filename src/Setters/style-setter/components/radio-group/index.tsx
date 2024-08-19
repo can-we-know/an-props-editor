@@ -20,12 +20,14 @@ export default (props: RadioProps) => {
   const { dataList, styleKey, onStyleChange, value } = props;
 
   const onRadioChange = (key: string, val: string | number | boolean) => {
-    onStyleChange([
-      {
-        styleKey: key,
-        value: val,
-      },
-    ]);
+    if (onStyleChange) {
+      onStyleChange([
+        {
+          styleKey: key,
+          value: val,
+        },
+      ]);
+    }
   };
 
   const onRadioItemClick = (
@@ -34,13 +36,15 @@ export default (props: RadioProps) => {
     // eslint-disable-next-line no-shadow
     value: string
   ) => {
-    if (value == val) {
-      onStyleChange([
-        {
-          styleKey: key,
-          value: null,
-        },
-      ]);
+    if (value === val) {
+      if (onStyleChange) {
+        onStyleChange([
+          {
+            styleKey: key,
+            value: null,
+          },
+        ]);
+      }
     }
   };
 

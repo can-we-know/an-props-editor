@@ -17,11 +17,10 @@ const ColorSetter: React.FC<ColorSetterProps> = (props: ColorSetterProps) => {
   // 如果有变量绑定，则展示默认值
   const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
 
-  const onChange = (val: any, hex: string) => {
-    console.log(val, hex);
+  const onChange = (val: any) => {
     const { onChange } = props;
     if (onChange) {
-      onChange(val);
+      onChange(val.toCssString());
     }
   };
 

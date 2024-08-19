@@ -57,8 +57,7 @@
     "eventemitter3": "^5.0.1",
     "js-beautify": "^1.15.1",
     "mobx": "^6.13.0",
-    "mobx-react-lite": "^4.0.7",
-    "react-color": "^2.19.3"
+    "mobx-react-lite": "^4.0.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",

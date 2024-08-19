@@ -11,11 +11,14 @@ export interface SortablePropsType {
 }
 
 export default function Sortable(props: SortablePropsType) {
-  const shell = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const items = useRef<(string | number)[]>([]);
 
   useEffect(() => {
-    const box = shell.current;
+    const box = containerRef.current;
+    if (!box) {
+      return;
+    }
 
     let isDragEnd = false;
 
@@ -136,10 +139,10 @@ export default function Sortable(props: SortablePropsType) {
     const placeAt = (beforeRef: Element | null) => {
       if (beforeRef) {
         if (beforeRef !== source) {
-          box.insertBefore(source, beforeRef);
+          box.insertBefore(source as Element, beforeRef);
         }
       } else {
-        box.appendChild(source);
+        box.appendChild(source as Element);
       }
     };
 
@@ -194,15 +197,11 @@ export default function Sortable(props: SortablePropsType) {
     };
   }, [props.dragImageSourceHandler, props.onSort]);
 
-  const getShellNode = (ref) => {
-    shell.current = ref;
-  };
-
   const { className, itemClassName, children } = props;
   const newitems: (string | number)[] = [];
   const cards = React.Children.map(children, (child) => {
     const { key: id } = child as ReactElement<{ key: string }>;
-    newitems.push(id);
+    newitems.push(id as string);
     return (
       <div
         key={id}
@@ -218,7 +217,7 @@ export default function Sortable(props: SortablePropsType) {
   return (
     <div
       className={classNames('ape-setter-sortable', className)}
-      ref={getShellNode}
+      ref={containerRef}
     >
       {cards}
     </div>

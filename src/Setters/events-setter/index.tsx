@@ -1,7 +1,7 @@
 import { Menu, Radio, Table } from 'antd';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import React, { ReactChild, ReactFragment, ReactPortal, useState } from 'react';
+import React, { ReactNode, ReactPortal, useState } from 'react';
 // import nativeEvents from './native-events';
 import { JS_FUNCTION } from '@/common/utils';
 import {
@@ -40,9 +40,8 @@ export const DEFINITION_EVENT_TYPE = {
 };
 
 export interface EventType {
-  description: string;
-  disabled: boolean;
   name: string;
+  eventName: string;
 }
 
 export interface IProps {
@@ -62,81 +61,15 @@ export default observer(function EventsSetter(props: IProps) {
   );
   const [selectType, setSelectType] = useState<string | null>(null);
 
-  /**
-   * 渲染事件信息
-   */
-  const renderEventInfoCell = (_value, record, _index) => {
-    const eventTagText = '组';
-    return (
-      <div key={record.name}>
-        <div className="event-cell">
-          <div className="event-type-tag">{eventTagText}</div>
-          {record.name}
-        </div>
-        <div className="event-cell" style={{ marginTop: '8px' }}>
-          <PaperClipOutlined className="related-icon" />
-          <span
-            className="related-event-name"
-            onClick={onEventEdit(record.eventName, record.name)}
-          >
-            {record.eventName || ''}
-          </span>
-        </div>
-      </div>
-    );
-  };
-
-  /**
-   * 渲染事件操作项
-   */
-  const renderEventOperateCell = (_rowIndex, record, _colIndex) => {
-    return (
-      <div key={record.name}>
-        <SettingOutlined
-          className="event-operate-icon"
-          style={{ marginLeft: '3px', marginRight: '4px' }}
-          onClick={() => onEventEdit(record.eventName, record.name)}
-        />
-        <DeleteOutlined
-          className="event-operate-icon"
-          onClick={() => deleteEvent(record.name)}
-        />
-      </div>
-    );
-  };
-
-  const onRadioChange = (e: RadioChangeEvent) => {
-    setSelectType(e.target.value);
-  };
-
-  const onEventMenuClick = ({ key: eventName }: { key: string }) => {
-    closeEventMenu();
-    setEditEventName(eventName);
-    onEventChange('');
-    openDialog('');
-  };
-
-  const closeEventMenu = () => {
-    if (selectType !== null) {
-      setSelectType(null);
-    }
-  };
-
-  const deleteEvent = (eventName: string) => () => {
-    const { store } = props;
-    const eventDataList = store[EVENTS] || [];
-    const selectedMap = getEventDataMap(eventDataList);
-
-    runInAction(() => {
-      delete selectedMap[eventName];
-      const newEventDataList = Object.keys(selectedMap).map(
-        (key) => selectedMap[key],
-      );
-      store[EVENTS] = newEventDataList;
+  const getEventDataMap = (eventDataList: any[] = []) => {
+    const selectedMap: Record<string, any> = {};
+    eventDataList.forEach((item) => {
+      selectedMap[item.name] = item;
     });
+    return selectedMap;
   };
 
-  const onEventChange = (event) => {
+  const onEventChange = (event: any) => {
     const eventName = event && event.type === JS_FUNCTION ? event.value : event;
     // 新增函数方法Map
     const extInfo = event && event.type === JS_FUNCTION ? event.extInfo : null;
@@ -160,31 +93,101 @@ export default observer(function EventsSetter(props: IProps) {
       store[EVENTS] = newEventDataList;
     });
   };
+  const openDialog = async (value: any) => {
+    const { dominoPropsPanel } = window as any;
+    if (!dominoPropsPanel) {
+      return;
+    }
+    dominoPropsPanel.emit('functionBindDialog.openDialog', {
+      pageState: dominoPropsPanel.pageState,
+      onChange: onEventChange,
+      value,
+      methodList: dominoPropsPanel.methodList,
+    });
+  };
 
-  const onEventEdit = (value, eventName) => () => {
+  const onEventEdit = (value: any, eventName: string) => () => {
     setEditEventName(eventName);
     openDialog(value);
   };
 
-  const openDialog = async (value) => {
-    const { apePropsPanel } = window as any;
-    apePropsPanel.emit('functionBindDialog.openDialog', {
-      pageState: apePropsPanel.pageState,
-      onChange: onEventChange,
-      value,
-      methodList: apePropsPanel.methodList,
+  const deleteEvent = (eventName: string) => () => {
+    const { store } = props;
+    const eventDataList = store[EVENTS] || [];
+    const selectedMap = getEventDataMap(eventDataList);
+
+    runInAction(() => {
+      delete selectedMap[eventName];
+      const newEventDataList = Object.keys(selectedMap).map(
+        (key) => selectedMap[key],
+      );
+      store[EVENTS] = newEventDataList;
     });
   };
 
-  const getEventDataMap = (eventDataList: any[] = []) => {
-    const selectedMap = {};
-    eventDataList.forEach((item) => {
-      selectedMap[item.name] = item;
-    });
-    return selectedMap;
+  /**
+   * 渲染事件信息
+   */
+  const renderEventInfoCell = (_value: any, record: EventType) => {
+    const eventTagText = '组';
+    return (
+      <div key={record.name}>
+        <div className="event-cell">
+          <div className="event-type-tag">{eventTagText}</div>
+          {record.name}
+        </div>
+        <div className="event-cell" style={{ marginTop: '8px' }}>
+          <PaperClipOutlined className="related-icon" />
+          <span
+            className="related-event-name"
+            onClick={onEventEdit(record.eventName, record.name)}
+          >
+            {record.eventName || ''}
+          </span>
+        </div>
+      </div>
+    );
   };
 
-  const eventDataList = props.store[EVENTS] || [];
+  /**
+   * 渲染事件操作项
+   */
+  const renderEventOperateCell = (_rowIndex: number, record: EventType) => {
+    return (
+      <div key={record.name}>
+        <SettingOutlined
+          className="event-operate-icon"
+          style={{ marginLeft: '3px', marginRight: '4px' }}
+          onClick={() => onEventEdit(record.eventName, record.name)}
+        />
+        <DeleteOutlined
+          className="event-operate-icon"
+          onClick={() => deleteEvent(record.name)}
+        />
+      </div>
+    );
+  };
+
+  const onRadioChange = (e: RadioChangeEvent) => {
+    setSelectType(e.target.value);
+  };
+
+  const closeEventMenu = () => {
+    if (selectType !== null) {
+      setSelectType(null);
+    }
+  };
+
+  const onEventMenuClick = ({ key: eventName }: { key: string }) => {
+    console.log('eventName', eventName);
+    closeEventMenu();
+    setEditEventName(eventName);
+    onEventChange('');
+    openDialog('');
+  };
+
+  const { store, definition } = props;
+  const eventDataList = store[EVENTS] || [];
   const selectedMap = getEventDataMap(eventDataList);
 
   return (
@@ -198,7 +201,6 @@ export default observer(function EventsSetter(props: IProps) {
       </div>
 
       <RadioGroup
-        size="default"
         value={selectType}
         onChange={onRadioChange}
         style={{ width: '100%' }}
@@ -206,7 +208,7 @@ export default observer(function EventsSetter(props: IProps) {
         {eventBtns?.map(
           (e: {
             value: any;
-            label: boolean | ReactChild | ReactFragment | ReactPortal;
+            label: boolean | ReactNode | ReactPortal;
           }) => (
             <Radio.Button value={e.value} key={e.value}>
               {e.label}
@@ -216,21 +218,21 @@ export default observer(function EventsSetter(props: IProps) {
       </RadioGroup>
       {selectType && selectType !== EVENT_CONTENTS.NATIVE_EVENT && (
         <Menu
-          defaultOpenKeys={props.definition.map((item: any) => `${item.index}`)}
+          defaultOpenKeys={definition.map((item: any) => `${item.index}`)}
           className="event-menu"
           onClick={onEventMenuClick}
           style={{
             width: document.body.clientWidth < 1860 ? '256px' : '357px',
           }}
-        >
-          {props.definition.map((item, index) => {
+          items={definition.map((item, index) => {
             const name: string = item.name || item;
-            return (
-              <Menu.Item key={name || index} disabled={selectedMap[name]}>
-                {name}
-              </Menu.Item>
-            );
+            return {
+              key: name || index,
+              label: name,
+              disabled: selectedMap[name],
+            };
           })}
+        >
         </Menu>
       )}
 

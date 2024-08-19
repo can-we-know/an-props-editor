@@ -1,3 +1,4 @@
+import ArraySetter from './setters/array-setter';
 import BoolSetter from './setters/bool-setter';
 import ColorSetter from './setters/color-setter';
 import FunctionSetter from './setters/function-setter';
@@ -9,6 +10,7 @@ import RadioGroupSetter from './setters/radiogroup-setter';
 import SelectSetter from './setters/select-setter';
 import SlotSetter from './setters/slot-setter';
 import StringSetter from './setters/string-setter';
+import StyleSetter from './setters/style-setter';
 import TextAreaSetter from './setters/textarea-setter';
 import VariableSetter from './setters/variable-setter';
 
@@ -26,6 +28,8 @@ const setterConfig = {
   FunctionSetter,
   TextAreaSetter,
   ObjectSetter,
+  ArraySetter,
+  StyleSetter,
 };
 
 export default setterConfig;

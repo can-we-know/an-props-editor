@@ -50,7 +50,7 @@ export default function CssCode(props: CodeProps) {
   return (
     <Drawer
       width={360}
-      visible={visible}
+      open={visible}
       destroyOnClose
       mask={false}
       title="css源码编辑"
@@ -62,12 +62,7 @@ export default function CssCode(props: CodeProps) {
         width={318}
         height={document.body.clientHeight - 90}
         language="css"
-        options={{
-          minimap: {
-            enabled: false,
-          },
-          ...defaultEditorOption,
-        }}
+        options={defaultEditorOption}
         onChange={updateCode}
       />
     </Drawer>

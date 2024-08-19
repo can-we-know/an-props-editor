@@ -10,7 +10,7 @@ const { Panel } = Collapse;
 
 interface LayoutProps {
   styleData: StyleData | any;
-  onStyleChange?: OnStyleChange;
+  onStyleChange: OnStyleChange;
   layoutPropsConfig?: any;
 }
 
@@ -39,41 +39,47 @@ export default (props: LayoutProps) => {
   );
 
   return (
-    <Collapse defaultActiveKey={['0']}>
-      <Panel header="布局" key="0" className="layout-style-container">
-        <Row
-          title={display.title}
-          dataList={displayDataList}
-          styleKey="display"
-          {...props}
-        />
+    <Collapse 
+      defaultActiveKey={['0']}     
+      items={[
+        {
+          label: '布局',
+          key: '0',
+          className: 'layout-style-container',
+          children: <>
+            <Row
+              title={display.title}
+              dataList={displayDataList}
+              styleKey="display"
+              {...props}
+            />
 
-        {styleData.display === 'flex' && (
-          <>
-            <Row
-              title={flexDirection.title}
-              dataList={flexDirection.dataList}
-              styleKey="flexDirection"
-              {...props}
-            />
-            <Row
-              title={justifyContent.title}
-              dataList={justifyContent.dataList}
-              styleKey="justifyContent"
-              {...props}
-            />
-            <Row
-              title={alignItems.title}
-              dataList={alignItems.dataList}
-              styleKey="alignItems"
-              {...props}
-            />
-            <Row
-              title={flexWrap.title}
-              dataList={flexWrap.dataList}
-              styleKey="flexWrap"
-              {...props}
-            />
+            {styleData.display === 'flex' && (
+              <>
+                <Row
+                  title={flexDirection.title}
+                  dataList={flexDirection.dataList}
+                  styleKey="flexDirection"
+                  {...props}
+                />
+                <Row
+                  title={justifyContent.title}
+                  dataList={justifyContent.dataList}
+                  styleKey="justifyContent"
+                  {...props}
+                />
+                <Row
+                  title={alignItems.title}
+                  dataList={alignItems.dataList}
+                  styleKey="alignItems"
+                  {...props}
+                />
+                <Row
+                  title={flexWrap.title}
+                  dataList={flexWrap.dataList}
+                  styleKey="flexWrap"
+                  {...props}
+                />
           </>
         )}
 
@@ -107,7 +113,10 @@ export default (props: LayoutProps) => {
             </div>
           </div>
         )}
-      </Panel>
+          </>
+        }
+      ]}
+      >
     </Collapse>
   );
 };

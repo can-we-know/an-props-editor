@@ -10,6 +10,8 @@ import StoreContext from './store/context';
 import ThemeContext, { ThemeEnum } from '../theme-context';
 import { MetaInfoType, PropsInfoType } from '@/types';
 import EntryContent from '@/components/entry-content';
+import StyleSetterContainer from '@/components/style-setter-container';
+import EventsSetter from '@/setters/events-setter';
 // import { JS_SLOT } from '@/common/utils';
 
 // const defaultProps = {
@@ -59,8 +61,8 @@ export default function AnPropsEditor(props: apePropsEditorPropsType) {
   };
 
   const { configure, componentName } = metaInfo || {};
-  // const supports: any = configure?.supports || {};
-  // const { style, events } = supports;
+  const supports: any = configure?.supports || {};
+  const { style, events } = supports;
   const propsInfo: PropsInfoType[] = configure?.props || [];
   const { className ='', prefixCls = 'ape-props-editor-container', theme = ThemeEnum.LIGHT } = props;
   const cls = classNames({
@@ -82,7 +84,24 @@ export default function AnPropsEditor(props: apePropsEditorPropsType) {
                     {entryMetaInfo && <EntryContent onBack={onEntryBack} setterMap={setterMap} onEntryMetaInfoChange={onEntryMetaInfoChange} data={store.data} metaInfo={entryMetaInfo} />}
                   </div>,
                 },
-              ]}
+                style && {
+                  label: '样式',
+                  key: TabKey.STYLE,
+                  children: <div className="ape-props-tab-content">
+                    <StyleSetterContainer store={store.data} name="style" />
+                  </div>
+                },
+                events && {
+                  label: '事件',
+                  key: TabKey.EVENT,
+                  children:  <div className="ape-props-tab-content">
+                    <EventsSetter
+                      definition={events}
+                      store={store.data}
+                    />
+                </div>
+                }
+              ].filter(Boolean)}
             />
           </div>
         </ThemeContext.Provider>

@@ -30,7 +30,7 @@ export default function ArraySetter(props: ArraySetterProps) {
    * @param target
    * @param value
    */
-  const onItemChange = (item, index) => () => {
+  const onItemChange = (item: any, index: number) => () => {
     setDrawerVisible(true);
     setCurItem(item);
     setCurIndex(index);
@@ -39,7 +39,7 @@ export default function ArraySetter(props: ArraySetterProps) {
   const onSort = (sortedIds: (string | number)[]) => {
     const { onChange, value } = props;
     const list = value && value.type === JS_JSON ? value.value : value;
-    const _value = [];
+    const _value: any[] = [];
     sortedIds.forEach((id, index) => {
       const item = list[+id];
       _value[index] = item;
@@ -72,10 +72,10 @@ export default function ArraySetter(props: ArraySetterProps) {
     }
   };
 
-  const onRemove = (removed, id) => () => {
+  const onRemove = (idx: number) => () => {
     const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
-      value.value.splice(id, 1);
+      value.value.splice(idx, 1);
       onChange({
         type: JS_JSON,
         value: [...value.value],
@@ -87,7 +87,7 @@ export default function ArraySetter(props: ArraySetterProps) {
     setDrawerVisible(false);
   };
 
-  const onItemValueChange = (val) => {
+  const onItemValueChange = (val: any) => {
     const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
       const list = value.value;
@@ -101,7 +101,7 @@ export default function ArraySetter(props: ArraySetterProps) {
     setCurItem((curValue || {})[curIndex]);
   };
 
-  const onItemBaseDataChange = (curIndex) => (val) => {
+  const onItemBaseDataChange = (curIndex: number) => (val: any) => {
     const { onChange, value } = props;
     if (value && value.type === JS_JSON) {
       const list = value.value;
@@ -131,12 +131,12 @@ export default function ArraySetter(props: ArraySetterProps) {
               itemClassName="ape-setter-array-list-card"
               onSort={onSort}
             >
-              {list.map((item, index) => (
+              {list.map((item: any, index: number) => (
                 <ArrayItem
                   key={index}
                   content={
                     <ArrayItemContent
-                      value={list[index]}
+                      value={item}
                       onChange={onItemBaseDataChange(index)}
                       index={index}
                       onItemChange={onItemChange(item, index)}
@@ -147,7 +147,7 @@ export default function ArraySetter(props: ArraySetterProps) {
                   data={item}
                   index={index}
                   itemSetter={itemSetter}
-                  onRemove={onRemove(item, index)}
+                  onRemove={onRemove(index)}
                 />
               ))}
             </Sortable>

@@ -43,7 +43,7 @@ export default (props: RowProps) => {
       <div className="content-container" style={contentStyle}>
         {children || (
           <RadioGroup
-            dataList={dataList}
+            dataList={dataList || []}
             {...props}
             // 区分是style类型的值还是其他普通的值，从styleData获取的是对象
             value={

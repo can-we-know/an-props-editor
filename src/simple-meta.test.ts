@@ -444,22 +444,307 @@ export default {
           },
         },
       },
+      {
+        title: '外观',
+        display: 'block',
+        type: 'group',
+        items: [
+          {
+            name: 'itemLayout',
+            title: {
+              label: '布局',
+              tip: 'itemLayout  | 设置 List.Item 布局, 设置成 vertical 则竖直样式显示, 默认横排',
+            },
+            propType: {
+              type: 'oneOf',
+              value: ['horizontal', 'vertical'],
+            },
+            defaultValue: 'horizontal',
+            setter: [
+              {
+                componentName: 'RadioGroupSetter',
+                props: {
+                  options: [
+                    {
+                      title: '水平',
+                      value: 'horizontal',
+                    },
+                    {
+                      title: '垂直',
+                      value: 'vertical',
+                    },
+                  ],
+                },
+              },
+              'VariableSetter',
+            ],
+          },
+          {
+            name: 'size',
+            title: {
+              label: '尺寸',
+              tip: 'size  | 列表的尺寸',
+            },
+            propType: {
+              type: 'oneOf',
+              value: ['default', 'large', 'small'],
+            },
+            defaultValue: 'default',
+            setter: [
+              {
+                componentName: 'RadioGroupSetter',
+                props: {
+                  options: [
+                    {
+                      title: '默认',
+                      value: 'default',
+                    },
+                    {
+                      title: '大',
+                      value: 'large',
+                    },
+                    {
+                      title: '小',
+                      value: 'small',
+                    },
+                  ],
+                },
+              },
+              'VariableSetter',
+            ],
+          },
+          {
+            name: 'bordered',
+            title: {
+              label: '显示边框',
+              tip: 'bordered | 是否展示边框',
+            },
+            propType: 'bool',
+            defaultValue: true,
+            setter: 'BoolSetter',
+          },
+          {
+            name: 'split',
+            title: {
+              label: '展示分割线',
+              tip: 'split | 是否展示分割线',
+            },
+            propType: 'bool',
+            defaultValue: true,
+            setter: 'BoolSetter',
+          },
+        ],
+      },
+      {
+        name: 'entry展示',
+        title: 'entry展示',
+        type: 'group',
+        extraProps: {
+          display: 'entry',
+        },
+        items: [
+          {
+            name: 'overlayStyle',
+            title: {
+              label: '样式设置',
+              tip: 'overlayStyle | 卡片样式',
+            },
+            setter: 'StyleSetter',
+            extraProps: {
+              display: 'block',
+            },
+          },
+        ],
+      },
+      {
+        title: 'accordion展示',
+        type: 'group',
+        display: 'accordion',
+        items: [
+          {
+            name: 'labelCol',
+            title: '标签栅格布局设置',
+            display: 'inline',
+            setter: {
+              componentName: 'ObjectSetter',
+              props: {
+                config: {
+                  items: [
+                    {
+                      name: 'span',
+                      title: '宽度',
+                      setter: {
+                        componentName: 'NumberSetter',
+                        props: {
+                          min: 0,
+                          max: 24,
+                          units: 'px',
+                        },
+                      },
+                    },
+                    {
+                      name: 'offset',
+                      title: '偏移',
+                      setter: {
+                        componentName: 'NumberSetter',
+                        props: {
+                          min: 0,
+                          max: 24,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            description:
+              'label 标签布局，同 `<Col>` 组件，设置 span offset 值，如 {span: 8, offset: 16}，该项仅在垂直表单有效',
+          },
+          {
+            name: 'wrapperCol',
+            title: '内容栅格布局设置',
+            display: 'inline',
+            setter: {
+              componentName: 'ObjectSetter',
+              props: {
+                config: {
+                  items: [
+                    {
+                      name: 'span',
+                      title: '宽度',
+                      setter: {
+                        componentName: 'NumberSetter',
+                        props: {
+                          min: 0,
+                          max: 24,
+                        },
+                      },
+                    },
+                    {
+                      name: 'offset',
+                      title: '偏移',
+                      setter: {
+                        componentName: 'NumberSetter',
+                        props: {
+                          min: 0,
+                          max: 24,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            description:
+              '需要为输入控件设置布局样式时，使用该属性，用法同 labelCol',
+          },
+        ],
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'StringSetter',
+                isRequired: false,
+                initialValue: '',
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: '必填设置',
+          tip: 'requiredobj | 必填设置',
+        },
+        name: 'requiredobj',
+        propType: {
+          type: 'shape',
+          value: [
+            {
+              name: 'required',
+              title: '是否必填',
+              propType: 'bool',
+            },
+            {
+              name: 'message',
+              title: '错误信息提示',
+              propType: 'string',
+            },
+          ],
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ObjectSetter',
+                props: {
+                  config: {
+                    items: [
+                      {
+                        title: '是否必填',
+                        name: 'required',
+                        propType: 'bool',
+                        setter: {
+                          componentName: 'MixedSetter',
+                          props: {
+                            setters: [
+                              {
+                                componentName: 'BoolSetter',
+                                isRequired: false,
+                                initialValue: false,
+                              },
+                              'VariableSetter',
+                            ],
+                          },
+                        },
+                      },
+                      {
+                        title: '错误信息提示',
+                        name: 'message',
+                        propType: 'string',
+                        setter: {
+                          componentName: 'MixedSetter',
+                          props: {
+                            setters: [
+                              {
+                                componentName: 'StringSetter',
+                                isRequired: false,
+                                initialValue: '',
+                              },
+                              'VariableSetter',
+                            ],
+                          },
+                        },
+                      },
+                    ],
+                    extraSetter: {
+                      componentName: 'MixedSetter',
+                      isRequired: false,
+                      props: {},
+                    },
+                  },
+                },
+                initialValue: {},
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
     ],
   },
   experimental: {
     callbacks: {
-      onNodeRemove: {
-        type: 'LowCodeFunction',
-        value:
-          '(e,t)=>{if(!e||!t)return;const l=t.children;l&&0===l.length&&t.remove()}',
-      },
+      onNodeRemove: {},
     },
   },
   snippets: [
     {
       title: '表单项',
-      screenshot:
-        'https://gw.alipayobjects.com/zos/wenyu-lowcode/kwcwhk3r/form-item-1.jpg',
+      screenshot: '',
       schema: {
         componentName: 'Form.Item',
         props: {
@@ -470,7 +755,7 @@ export default {
   ],
   npm: {
     package: 'antd/lib/form',
-    version: '0.2.0',
+    version: '2.2.0',
     exportName: 'Form',
     destructuring: true,
     subName: 'item',

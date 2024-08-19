@@ -1,10 +1,12 @@
 import InlineItem from '@/components/inline-item';
+import { PropsInfoType } from '@/types';
 import { Drawer } from 'antd';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 export default observer(function ObjectSetterSection(props: any) {
-  const onValueChange = (item) => (val) => {
+
+  const onValueChange = (item: PropsInfoType) => (val: any) => {
     const { onChange, value } = props;
     const { name } = item;
     if (value) {
@@ -41,7 +43,7 @@ export default observer(function ObjectSetterSection(props: any) {
     >
       <div className="ape-setter-object-section">
         <div className="ape-setter-object-section-body">
-          {items.map((item) => (
+          {items.map((item: PropsInfoType) => (
             <InlineItem
               setterMap={setterMap}
               value={value[item.name]}

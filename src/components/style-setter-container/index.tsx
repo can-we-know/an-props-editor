@@ -8,13 +8,16 @@ import Title from '../title';
 import VariableIcon from '../variable-icon';
 import './index.less';
 
-// interface StyleSetterProps {
+interface StyleSetterProps {
+  title?: any;
+  name: string;
+  store: Record<string ,any>;
+}
 
-// }
+export default observer(function StyleSetterContainer(props: StyleSetterProps) {
+  const { title, name = 'style', store = {} } = props;
 
-export default observer(function StyleSetterContainer(props: any) {
   const onVariableBindClick = () => {
-    const { store = {} } = props;
     const { apePropsPanel } = window as any;
     apePropsPanel.emit('variableBindDialog.openDialog', {
       pageState: apePropsPanel.pageState,
@@ -23,7 +26,7 @@ export default observer(function StyleSetterContainer(props: any) {
     });
   };
 
-  const onStyleChange = (val) => {
+  const onStyleChange = (val: any) => {
     const { name, store = {} } = props;
     runInAction(() => {
       if (name === 'style') {
@@ -37,7 +40,6 @@ export default observer(function StyleSetterContainer(props: any) {
     });
   };
 
-  const { title, name = 'style', store = {} } = props;
   let value = store[name] || {};
   if (value && value.type === JS_JSON) {
     value = value.value;

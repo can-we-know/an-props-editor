@@ -1,6 +1,4 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/default-props-match-prop-types */
-import { ConfigProvider } from 'antd';
+// import { ConfigProvider } from 'antd';
 import React, { useState } from 'react';
 import CssCode from './components/css-code';
 import Icon from './components/icon';
@@ -22,43 +20,44 @@ export interface StyleSetterProps {
   isShowCssCode?: boolean;
   // 展示板块
   showModuleList?: ('background' | 'border' | 'font' | 'layout' | 'position')[];
+  [key: string]: any;
 }
 
-export default function StyleSetterV2(props: StyleSetterProps) {
-  const defaultProps = {
-    // 默认单位
-    unit: 'px',
-    // 默认计算尺寸缩放
-    placeholderScale: 1,
-    // 展示板块
-    showModuleList: ['background', 'border', 'font', 'layout', 'position'],
-    // 是否展示css源码编辑面板
-    isShowCssCode: true,
-    // layout 配置面板
-    layoutPropsConfig: {
-      // display 展示列表
-      showDisPlayList: ['inline', 'flex', 'block', 'inline-block', 'none'],
-      isShowPadding: true,
-      isShowMargin: true,
-      isShowWidthHeight: true,
-    },
+const defaultProps = {
+  // 默认单位
+  unit: 'px',
+  // 默认计算尺寸缩放
+  placeholderScale: 1,
+  // 展示板块
+  showModuleList: ['background', 'border', 'font', 'layout', 'position'],
+  // 是否展示css源码编辑面板
+  isShowCssCode: true,
+  // layout 配置面板
+  layoutPropsConfig: {
+    // display 展示列表
+    showDisPlayList: ['inline', 'flex', 'block', 'inline-block', 'none'],
+    isShowPadding: true,
+    isShowMargin: true,
+    isShowWidthHeight: true,
+  },
 
-    fontPropsConfig: {
-      // fontFamily列表
-      fontFamilyList: [
-        { value: 'Helvetica', label: 'Helvetica' },
-        { value: 'Arial', label: 'Arial' },
-        { value: 'serif', label: 'serif' },
-      ],
-    },
+  fontPropsConfig: {
+    // fontFamily列表
+    fontFamilyList: [
+      { value: 'Helvetica', label: 'Helvetica' },
+      { value: 'Arial', label: 'Arial' },
+      { value: 'serif', label: 'serif' },
+    ],
+  },
 
-    // position 配置面板
-    positionPropsConfig: {
-      isShowFloat: true,
-      isShowClear: true,
-    },
-  };
+  // position 配置面板
+  positionPropsConfig: {
+    isShowFloat: true,
+    isShowClear: true,
+  },
+};
 
+export default function StyleSetter(props: StyleSetterProps) {
   const [cssCodeVisiable, setCssCodeVisiable] = useState(false);
   const [cssCode, setCssCode] = useState(parseToCssCode(props.value));
 
@@ -106,7 +105,7 @@ export default function StyleSetterV2(props: StyleSetterProps) {
     showModuleMap[key] = true;
   });
   return (
-    <ConfigProvider>
+    // <ConfigProvider>
       <div className="lowcode-setter-style-v2">
         {isShowCssCode && (
           <div className="top-bar">
@@ -175,6 +174,6 @@ export default function StyleSetterV2(props: StyleSetterProps) {
           />
         )}
       </div>
-    </ConfigProvider>
+    // </ConfigProvider>
   );
 }

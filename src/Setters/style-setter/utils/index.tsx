@@ -3,15 +3,15 @@ import { StyleData } from './types';
 import { toCSS, toJSON } from 'cssjson';
 
 export function removeUnit(value: string) {
-  if (value !== undefined && value != null) {
+  if (value !== undefined && value !== null) {
     return parseInt(value);
   }
 
-  return null;
+  return;
 }
 
 export function addUnit(value: number | string, unit: string) {
-  if (value !== undefined && value != null) {
+  if (value !== undefined && value !== null) {
     return value + unit;
   } else {
     return null;
@@ -62,9 +62,9 @@ export function hexify(color: string) {
 
 export function parseToCssCode(styleData: StyleData) {
   const parseStyleData: any = {};
-  for (const styleKey in styleData) {
+  Object.keys(styleData).forEach(styleKey => {
     parseStyleData[toLine(styleKey)] = styleData[styleKey];
-  }
+  });
 
   const cssJson = {
     children: {
@@ -79,7 +79,7 @@ export function parseToCssCode(styleData: StyleData) {
 }
 
 export function parseToStyleData(cssCode: string) {
-  const styleData = {};
+  const styleData: Record<string, any> = {};
   try {
     const cssJson = toJSON(cssCode);
     const cssJsonData = cssJson?.children?.['#main']?.attributes;
@@ -89,14 +89,14 @@ export function parseToStyleData(cssCode: string) {
       }
     }
     // 转化key
-  } catch (e) {
+  } catch (e: any) {
     console.error(e.message);
   }
 
   return styleData;
 }
 
-export function isSameStayleData(newData, data) {
+export function isSameStayleData(newData: Record<string, any>, data: Record<string, any>) {
   const newKeys = Object.keys(newData);
   const keys = Object.keys(data);
   if (newKeys.length !== keys.length) {

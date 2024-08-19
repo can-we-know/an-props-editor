@@ -10,7 +10,6 @@ interface EntryItemProps  {
 }
 
 export default function EntryItem(props: EntryItemProps) {
-
   const { metaInfo, onClick } = props;
     const { title, label } = metaInfo || {};
     return (
