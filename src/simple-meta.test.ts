@@ -734,6 +734,308 @@ export default {
           },
         },
       },
+      {
+        title: {
+          label: 'ArraySetter 设置ObjectSetter',
+          tip: 'routes | router 的路由栈信息',
+        },
+        name: 'routes',
+        propType: {
+          type: 'arrayOf',
+          value: {
+            type: 'shape',
+            value: [
+              {
+                name: 'path',
+                propType: 'string',
+              },
+              {
+                name: 'breadcrumbName',
+                propType: 'string',
+              },
+            ],
+          },
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'ObjectSetter',
+                    props: {
+                      config: {
+                        items: [
+                          {
+                            title: {
+                              label: {
+                                type: 'i18n',
+                                'en-US': 'path',
+                                'zh-CN': 'path',
+                              },
+                            },
+                            name: 'path',
+                            propType: 'string',
+                            setter: {
+                              componentName: 'MixedSetter',
+                              props: {
+                                setters: [
+                                  {
+                                    componentName: 'StringSetter',
+                                    isRequired: false,
+                                    initialValue: '',
+                                  },
+                                  'VariableSetter',
+                                ],
+                              },
+                            },
+                          },
+                          {
+                            title: {
+                              label: {
+                                type: 'i18n',
+                                'en-US': 'breadcrumbName',
+                                'zh-CN': 'breadcrumbName',
+                              },
+                            },
+                            name: 'breadcrumbName',
+                            propType: 'string',
+                            setter: {
+                              componentName: 'MixedSetter',
+                              props: {
+                                setters: [
+                                  {
+                                    componentName: 'StringSetter',
+                                    isRequired: false,
+                                    initialValue: '',
+                                  },
+                                  'VariableSetter',
+                                ],
+                              },
+                            },
+                          },
+                        ],
+                        extraSetter: {
+                          componentName: 'MixedSetter',
+                          isRequired: false,
+                          props: {},
+                        },
+                      },
+                    },
+                    initialValue: {
+                      path: '',
+                      breadcrumbName: '',
+                    },
+                  },
+                },
+                initialValue: [],
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: 'ArraySetter设置SlotSetter',
+          tip: 'actions | 列表操作组',
+        },
+        name: 'actions',
+        propType: {
+          type: 'arrayOf',
+          value: 'node',
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'SlotSetter',
+                    title: '操作组插槽',
+                    initialValue: {
+                      type: 'JSSlot',
+                      value: [],
+                    },
+                  },
+                },
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: 'ArraySetter设置StringSetter',
+          tip: 'treeDefaultExpandedKeys | 默认展开的树节点',
+        },
+        name: 'treeDefaultExpandedKeys',
+        propType: {
+          type: 'arrayOf',
+          value: 'string',
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'StringSetter',
+                    isRequired: false,
+                    initialValue: '',
+                  },
+                },
+                initialValue: [],
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: 'ArraySetter设置RadioGroupSetter',
+          tip: 'trigger | 触发下拉的行为, 移动端不支持 hover',
+        },
+        name: 'trigger',
+        propType: {
+          type: 'arrayOf',
+          value: {
+            type: 'oneOf',
+            value: ['click', 'hover', 'contextMenu'],
+          },
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'RadioGroupSetter',
+                    props: {
+                      dataSource: [
+                        {
+                          label: 'click',
+                          value: 'click',
+                        },
+                        {
+                          label: 'hover',
+                          value: 'hover',
+                        },
+                        {
+                          label: 'contextMenu',
+                          value: 'contextMenu',
+                        },
+                      ],
+                      options: [
+                        {
+                          label: 'click',
+                          value: 'click',
+                        },
+                        {
+                          label: 'hover',
+                          value: 'hover',
+                        },
+                        {
+                          label: 'contextMenu',
+                          value: 'contextMenu',
+                        },
+                      ],
+                    },
+                    initialValue: 'click',
+                  },
+                },
+                initialValue: [],
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: 'ArraySetter设置NumberSetter',
+          tip: 'offset | 设置状态点的位置偏移 [number, number]',
+        },
+        name: 'offset',
+        propType: {
+          type: 'arrayOf',
+          value: 'number',
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'NumberSetter',
+                    isRequired: false,
+                    initialValue: 0,
+                  },
+                },
+                initialValue: [],
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
+      {
+        title: {
+          label: 'ArraySetter设置MixedSetter',
+          tip: 'defaultValue | 默认的选中项',
+        },
+        name: 'defaultValue',
+        propType: {
+          type: 'arrayOf',
+          value: {
+            type: 'oneOfType',
+            value: ['string', 'number'],
+          },
+        },
+        setter: {
+          componentName: 'MixedSetter',
+          props: {
+            setters: [
+              {
+                componentName: 'ArraySetter',
+                props: {
+                  itemSetter: {
+                    componentName: 'MixedSetter',
+                    props: {
+                      setters: [
+                        {
+                          componentName: 'StringSetter',
+                          isRequired: false,
+                          initialValue: '',
+                        },
+                        {
+                          componentName: 'NumberSetter',
+                          isRequired: false,
+                          initialValue: 0,
+                        },
+                      ],
+                    },
+                  },
+                },
+                initialValue: [],
+              },
+              'VariableSetter',
+            ],
+          },
+        },
+      },
     ],
   },
   experimental: {
