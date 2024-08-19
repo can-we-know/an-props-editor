@@ -1,6 +1,7 @@
-import React from 'react';
 import MonacoEditor from '@angroup/monaco-editor';
-import ThemeContext from '../../theme-context';
+import React from 'react';
+import ThemeContext from '../../editor/theme-context';
+import './index.less';
 
 const monacoOptions = {
   selectOnLineNumbers: true,
@@ -21,6 +22,8 @@ export default function BaseMonacoEditor(props: Record<string, any>) {
             options={monacoOptions}
             {...props}
           />
-        </div>)}
-    </ThemeContext.Consumer>);
+        </div>
+      )}
+    </ThemeContext.Consumer>
+  );
 }

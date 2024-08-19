@@ -27,7 +27,7 @@ export function getSetterKeyList(setterArr: (string | SetterMetaItem)[]) {
 }
 
 export function formatSetterState(
-  setter: string | (string | SetterMetaItem)[] | SetterMetaItem,
+  setter: string | (string | SetterMetaItem)[] | SetterMetaItem | undefined,
   value: any,
   setterMap: Record<string, ElementType>,
 ) {

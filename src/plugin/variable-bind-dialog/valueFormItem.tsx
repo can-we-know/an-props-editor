@@ -1,6 +1,6 @@
-import MonacoWrapper from '@/components/monaco-editor';
+import BaseMonacoEditor from '@/components/monaco-editor';
 import { Input, InputNumber, Select } from 'antd';
-import React from 'react';
+import React, { Component } from 'react';
 import './index.less';
 
 const { Option } = Select;
@@ -33,43 +33,47 @@ interface Props {
   value?: any;
 }
 
-export default function ValueFormItem(props: Props) {
-  const { type, ...restProps } = props;
-  let comp = null;
+export default class ValueFormItem extends Component<Props> {
+  render() {
+    const { type, ...restProps } = (this as any).props;
+    let comp = null;
 
-  switch (type) {
-    case 'string':
-      comp = <Input {...restProps} />;
-      break;
-    case 'number':
-      comp = (
-        <InputNumber className="data-create-form-inputNumber" {...restProps} />
-      );
-      break;
-    case 'boolean':
-      comp = (
-        <Select {...restProps}>
-          <Option value="true">true</Option>
-          <Option value="false">false</Option>
-        </Select>
-      );
-      break;
-    case 'null':
-      comp = <span>null</span>;
-      break;
-    case 'object':
-      comp = (
-        <MonacoWrapper
-          height={200}
-          language="json"
-          theme="vs-dark"
-          options={monacoOptions}
-          {...restProps}
-        />
-      );
-      break;
-    default:
-      comp = null;
+    switch (type) {
+      case 'string':
+        comp = <Input {...restProps} />;
+        break;
+      case 'number':
+        comp = (
+          <InputNumber
+            className="data-create-form-inputNumber"
+            {...restProps}
+          />
+        );
+        break;
+      case 'boolean':
+        comp = (
+          <Select {...restProps}>
+            <Option value="true">true</Option>
+            <Option value="false">false</Option>
+          </Select>
+        );
+        break;
+      case 'null':
+        comp = <span>null</span>;
+        break;
+      case 'object':
+        comp = (
+          <BaseMonacoEditor
+            height={200}
+            language="json"
+            options={monacoOptions}
+            {...restProps}
+          />
+        );
+        break;
+      default:
+        comp = null;
+    }
+    return comp;
   }
-  return comp;
 }

@@ -1,7 +1,7 @@
 import { Menu, Radio, Table } from 'antd';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import React, { ReactNode, ReactPortal, useState } from 'react';
+import React, { ReactNode, ReactPortal, useRef, useState } from 'react';
 // import nativeEvents from './native-events';
 import { JS_FUNCTION } from '@/common/utils';
 import {
@@ -56,9 +56,9 @@ export default observer(function EventsSetter(props: IProps) {
       label: '组件自带事件',
     },
   ];
-  const [editEventName, setEditEventName] = useState<string | undefined>(
-    undefined,
-  );
+
+  const editEventNameRef = useRef<string>();
+
   const [selectType, setSelectType] = useState<string | null>(null);
 
   const getEventDataMap = (eventDataList: any[] = []) => {
@@ -74,6 +74,7 @@ export default observer(function EventsSetter(props: IProps) {
     // 新增函数方法Map
     const extInfo = event && event.type === JS_FUNCTION ? event.extInfo : null;
     const { store } = props;
+    const editEventName = editEventNameRef.current;
     if (!editEventName) {
       return;
     }
@@ -94,20 +95,20 @@ export default observer(function EventsSetter(props: IProps) {
     });
   };
   const openDialog = async (value: any) => {
-    const { dominoPropsPanel } = window as any;
-    if (!dominoPropsPanel) {
+    const { apePropsPanel } = window as any;
+    if (!apePropsPanel) {
       return;
     }
-    dominoPropsPanel.emit('functionBindDialog.openDialog', {
-      pageState: dominoPropsPanel.pageState,
+    apePropsPanel.emit('functionBindDialog.openDialog', {
+      pageState: apePropsPanel.pageState,
       onChange: onEventChange,
       value,
-      methodList: dominoPropsPanel.methodList,
+      methodList: apePropsPanel.methodList,
     });
   };
 
   const onEventEdit = (value: any, eventName: string) => () => {
-    setEditEventName(eventName);
+    editEventNameRef.current = eventName;
     openDialog(value);
   };
 
@@ -158,11 +159,11 @@ export default observer(function EventsSetter(props: IProps) {
         <SettingOutlined
           className="event-operate-icon"
           style={{ marginLeft: '3px', marginRight: '4px' }}
-          onClick={() => onEventEdit(record.eventName, record.name)}
+          onClick={onEventEdit(record.eventName, record.name)}
         />
         <DeleteOutlined
           className="event-operate-icon"
-          onClick={() => deleteEvent(record.name)}
+          onClick={deleteEvent(record.name)}
         />
       </div>
     );
@@ -181,7 +182,7 @@ export default observer(function EventsSetter(props: IProps) {
   const onEventMenuClick = ({ key: eventName }: { key: string }) => {
     console.log('eventName', eventName);
     closeEventMenu();
-    setEditEventName(eventName);
+    editEventNameRef.current = eventName;
     onEventChange('');
     openDialog('');
   };
@@ -206,10 +207,7 @@ export default observer(function EventsSetter(props: IProps) {
         style={{ width: '100%' }}
       >
         {eventBtns?.map(
-          (e: {
-            value: any;
-            label: boolean | ReactNode | ReactPortal;
-          }) => (
+          (e: { value: any; label: boolean | ReactNode | ReactPortal }) => (
             <Radio.Button value={e.value} key={e.value}>
               {e.label}
             </Radio.Button>
@@ -232,8 +230,7 @@ export default observer(function EventsSetter(props: IProps) {
               disabled: selectedMap[name],
             };
           })}
-        >
-        </Menu>
+        ></Menu>
       )}
 
       <div className="event-table">

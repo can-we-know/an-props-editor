@@ -39,7 +39,7 @@ export interface ObjectMetaItem {
 export interface PropsInfoType {
   type?: string;
   display?: string;
-  name: string;
+  name?: string;
   isRequired?: boolean;
   title:
     | string
@@ -51,7 +51,7 @@ export interface PropsInfoType {
   label?: string;
   propType?: any;
   defaultValue?: any;
-  setter: string | SetterMetaItem | (string | SetterMetaItem)[];
+  setter?: string | SetterMetaItem | (string | SetterMetaItem)[];
   supportVariable?: boolean;
   condition?: any;
   extraProps?: {

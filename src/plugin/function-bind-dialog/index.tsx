@@ -1,5 +1,12 @@
 import { Button, Input, message, Modal, Tabs, Tooltip } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { MethodType } from './funcForm';
 // import { toJS } from 'mobx';
 // import MonacoEditor from '../../component/monaco-editor';
 import { JS_FUNCTION } from '@/common/utils';
@@ -13,67 +20,104 @@ enum EventType {
   CUSTOM_EVENT = 'CUSTOM_EVENT',
 }
 
-interface Method {
-  methodName: string;
-  methodBody: string;
+interface FunctionBindState {
+  visiable: boolean;
+  eventTab: EventType;
+  curMethod?: MethodType;
+  eventName: string;
+  selectedEventName: string;
+  eventList: string[];
+  onValueChange: (val: any) => void;
+  initialValue: string;
 }
 
-export default function FunctionBindDialog(props: any) {
-  const newFuncRef = useRef<any>(null);
-  const customFuncRef = useRef<any>(null);
+interface FunctionFormRefType {
+  clearFromValues: () => void;
+  getFormValues: () => Promise<Record<string, any>>;
+  setMethod: (curMethod?: MethodType) => void;
+}
 
-  const [methodList, setMethodList] = useState<Method[]>([]);
+interface OpenDialogStateType {
+  pageState: Record<string, any>;
+  onChange: (val: any) => void;
+  value: any;
+  methodList: MethodType[];
+  initialValue: string;
+}
 
-  const [state, setState] = useState<any>({
+export default function FunctionBindDialog() {
+  const newFuncRef = useRef<FunctionFormRefType>();
+  const customFuncRef = useRef<FunctionFormRefType>();
+
+  const methodListRef = useRef<MethodType[]>([]);
+
+  const [state, setState] = useState<FunctionBindState>({
     visiable: false,
     eventTab: EventType.CUSTOM_EVENT,
-    selectedEventName: '',
     eventName: '',
-    onValueChange: () => {},
+    selectedEventName: '',
     eventList: [],
-    curMethod: null,
+    onValueChange: () => {},
     initialValue: '',
   });
 
-  const openDialog = ({
-    pageState = {},
-    onChange,
-    value,
-    methodList = [],
-    initialValue,
-  }) => {
-    const { handleFns = [] } = pageState as any;
-    setMethodList(methodList);
-    let curMethod = null;
-    if ((value && value.value) || typeof value === 'string') {
-      // 遍历当前自定义方法列表，根据当前方法名进行过滤
-      if (methodList?.length) {
-        curMethod = getSelectMethodNode(value);
-        if (curMethod && customFuncRef?.current) {
-          // @ts-ignore
-          this.customFuncRef.current.setFormValues(curMethod);
-        }
+  const getSelectMethodNode = (valueMap: string | any) => {
+    const value = typeof valueMap === 'string' ? valueMap : valueMap?.value;
+    const methodList = methodListRef.current;
+    const length = methodList.length;
+    for (let i = 0; i < length; ++i) {
+      const item = methodList[i];
+      if (item.methodName === value) {
+        return item;
       }
     }
-    const eventName = value && value.type ? value.value : value;
-    setState({
-      visiable: true,
-      eventTab: getCurrentEventTab(methodList, value), // 当前展示tab
-      curMethod,
-      eventName,
-      selectedEventName: eventName,
-      eventList: handleFns,
-      onValueChange: onChange,
-      initialValue,
-    });
   };
 
-  const getCurrentEventTab = (methodList, selectedEventName) => {
+  const getCurrentEventTab = (
+    methodList: MethodType[],
+    selectedEventName: string,
+  ) => {
     if (selectedEventName) {
       return EventType.CUSTOM_EVENT;
     }
     return methodList?.length ? EventType.CUSTOM_EVENT : EventType.NEW_EVENT;
   };
+
+  const openDialog = useCallback(
+    ({
+      pageState = {},
+      onChange,
+      value,
+      methodList = [],
+      initialValue,
+    }: OpenDialogStateType) => {
+      const { handleFns = [] } = pageState as any;
+      methodListRef.current = methodList;
+      let curMethod;
+      if ((value && value.value) || typeof value === 'string') {
+        // 遍历当前自定义方法列表，根据当前方法名进行过滤
+        if (methodList?.length) {
+          curMethod = getSelectMethodNode(value);
+          if (curMethod && customFuncRef?.current) {
+            // @ts-ignore
+            this.customFuncRef.current.setFormValues(curMethod);
+          }
+        }
+      }
+      const eventName = value && value.type ? value.value : value;
+      setState({
+        visiable: true,
+        eventTab: getCurrentEventTab(methodList, value), // 当前展示tab
+        curMethod,
+        eventName,
+        selectedEventName: eventName,
+        eventList: handleFns,
+        onValueChange: onChange,
+        initialValue,
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     (window as any).apePropsPanel.on(
@@ -88,62 +132,42 @@ export default function FunctionBindDialog(props: any) {
     };
   }, []);
 
-  const onInputChange = (e) => {
-    setState({
-      ...state,
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setState((oldState) => ({
+      ...oldState,
       eventName: e.target.value,
-    });
+    }));
   };
 
   const onSelectItem = (eventName: string) => () => {
     // 事件选择匹配自定义事件Map: { methodName: '', methodBody: '' }
     const selectMethod = getSelectMethodNode(eventName);
     if (customFuncRef?.current && selectMethod) {
-      // @ts-ignore
-      this.customFuncRef.current.setFormValues(selectMethod || {});
+      customFuncRef.current.setMethod(selectMethod);
     }
-    setState({
-      ...state,
+    setState((oldState) => ({
+      ...oldState,
       selectedEventName: eventName,
       eventName,
-    });
+    }));
   };
 
   const handleTabsChange = (key: string) => {
     if (key === EventType.NEW_EVENT && newFuncRef?.current) {
-      // @ts-ignore
-      const { clearFromValues } = this.newFuncRef.current;
+      const { clearFromValues } = newFuncRef.current;
       clearFromValues();
     }
-    setState({ ...state, eventTab: key });
+    setState((oldState) => ({
+      ...oldState,
+      eventTab: key as EventType,
+    }));
   };
 
-  const pickupFunctionName = (codeStr) => {
-    return codeStr.substr(0, codeStr.indexOf('('));
-  };
-
-  const removeSpace = (str) => {
-    return str.replace(/\s*/g, '');
-  };
-
-  const getSelectMethodNode = (valueMap: string | any) => {
-    const value = typeof valueMap === 'string' ? valueMap : valueMap?.value;
-    const { length } = methodList;
-    for (let i = 0; i < length; ++i) {
-      const item = methodList[i];
-      if (item.methodName === value) {
-        return item;
-      }
-    }
-  };
-
-  const formatEventName = (eventName) => {
-    const newEventNameArr = eventName.split('');
-    const index = eventName.indexOf('.');
-    if (index >= 0) {
-      newEventNameArr[index + 1] = newEventNameArr[index + 1].toUpperCase();
-    }
-    return newEventNameArr.join('').replace(/\./, '');
+  const closeDialog = () => {
+    setState((oldState) => ({
+      ...oldState,
+      visiable: false,
+    }));
   };
 
   const onOk = async () => {
@@ -210,13 +234,6 @@ export default function FunctionBindDialog(props: any) {
     }
   };
 
-  const closeDialog = () => {
-    setState({
-      ...state,
-      visiable: false,
-    });
-  };
-
   const renderBottom = () => {
     return (
       <div className="variable-bind-dialog-bottom">
@@ -248,7 +265,7 @@ export default function FunctionBindDialog(props: any) {
         )}
         <div style={{ display: selectMethod ? 'block' : 'none' }}>
           <FunctionForm
-            wrappedComponentRef={customFuncRef}
+            ref={customFuncRef}
             curMethod={curMethod}
             isEdit
             initialValue={initialValue}
@@ -306,17 +323,24 @@ export default function FunctionBindDialog(props: any) {
         </div>
 
         <div className="dialog-right-container">
-          <Tabs activeKey={eventTab} onChange={handleTabsChange}>
-            <Tabs.TabPane tab="自定义事件" key={EventType.CUSTOM_EVENT}>
-              {renderCustomFuncForm()}
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="新建事件" key={EventType.NEW_EVENT}>
-              <FunctionForm
-                wrappedComponentRef={newFuncRef}
-                initialValue={initialValue}
-              />
-            </Tabs.TabPane>
-          </Tabs>
+          <Tabs
+            activeKey={eventTab}
+            onChange={handleTabsChange}
+            items={[
+              {
+                key: EventType.CUSTOM_EVENT,
+                label: '自定义事件',
+                children: renderCustomFuncForm(),
+              },
+              {
+                key: EventType.NEW_EVENT,
+                label: '新建事件',
+                children: (
+                  <FunctionForm ref={newFuncRef} initialValue={initialValue} />
+                ),
+              },
+            ]}
+          ></Tabs>
         </div>
       </div>
     </Modal>

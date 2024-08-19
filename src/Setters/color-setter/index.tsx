@@ -1,9 +1,8 @@
+import { JS_EXPRESSION } from '@/common/utils';
 import { ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import React from 'react';
-import { JS_EXPRESSION } from '@/common/utils';
 import './index.less';
-
 
 export interface ColorSetterProps {
   value: any;
@@ -17,10 +16,11 @@ const ColorSetter: React.FC<ColorSetterProps> = (props: ColorSetterProps) => {
   // 如果有变量绑定，则展示默认值
   const valueStr = value && value.type === JS_EXPRESSION ? defaultValue : val;
 
-  const onChange = (val: any) => {
+  const onChange = (val: any, hex: string) => {
+    console.log(val, hex);
     const { onChange } = props;
     if (onChange) {
-      onChange(val.toCssString());
+      onChange(val);
     }
   };
 

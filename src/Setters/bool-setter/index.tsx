@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Switch } from 'antd';
+import * as React from 'react';
 
 import './index.less';
 
@@ -9,7 +9,6 @@ interface BoolSetterProps {
   defaultValue: any;
   onChange: (val: boolean) => void;
 }
-
 
 export default function BoolSetter(props: BoolSetterProps) {
   const { onChange, disabled, value, defaultValue } = props;

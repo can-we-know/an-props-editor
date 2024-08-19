@@ -5,10 +5,9 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 
 export default observer(function ObjectSetterSection(props: any) {
-
   const onValueChange = (item: PropsInfoType) => (val: any) => {
     const { onChange, value } = props;
-    const { name } = item;
+    const { name = '' } = item;
     if (value) {
       onChange({
         ...value,
@@ -46,7 +45,7 @@ export default observer(function ObjectSetterSection(props: any) {
           {items.map((item: PropsInfoType) => (
             <InlineItem
               setterMap={setterMap}
-              value={value[item.name]}
+              value={value[item.name as string]}
               onChange={onValueChange(item)}
               metaInfo={item}
               key={item.name}

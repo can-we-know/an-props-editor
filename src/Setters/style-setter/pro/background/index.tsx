@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { ChangeEvent } from 'react';
-import { useState, useEffect } from 'react';
-import Row from '../../components/row';
-import Icon from '../../components/icon';
-import ColorInput from '../../components/color-input';
-import { StyleData, StyleDataItem, OnStyleChange } from '../../utils/types';
 import { Collapse, Input } from 'antd';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import ColorInput from '../../components/color-input';
+import Icon from '../../components/icon';
+import Row from '../../components/row';
+import { OnStyleChange, StyleData, StyleDataItem } from '../../utils/types';
 import borderConfig from './config.json';
 
 interface FontProps {
@@ -13,14 +12,20 @@ interface FontProps {
   onStyleChange: OnStyleChange;
   unit?: string;
 }
+
+enum BgTypeEnum {
+  COLOR = 'color',
+  BGIMG = 'bgImg',
+}
+
 export default (props: FontProps) => {
   const { onStyleChange, styleData } = props;
   const { backgroundType } = borderConfig;
-  const [bgType, setBgType] = useState<string>();
+  const [bgType, setBgType] = useState<BgTypeEnum>();
 
   const onBgTypeChange = (styleDataList: StyleDataItem[]) => {
     if (styleDataList) {
-      setBgType(styleDataList[0].value as string);
+      setBgType(styleDataList[0].value as BgTypeEnum);
     }
   };
 
@@ -38,7 +43,7 @@ export default (props: FontProps) => {
       // var result = styleUrl.match(reg);
       const newUrl = styleUrl.substring(
         styleUrl.indexOf('(') + 1,
-        styleUrl.indexOf(')')
+        styleUrl.indexOf(')'),
       );
 
       return newUrl;
@@ -53,9 +58,9 @@ export default (props: FontProps) => {
 
   const initData = () => {
     if (styleData.backgroundColor) {
-      setBgType('backgroundColor');
+      setBgType(BgTypeEnum.COLOR);
     } else if (styleData.backgroundImage) {
-      setBgType('backgroundImage');
+      setBgType(BgTypeEnum.BGIMG);
     }
   };
 
@@ -74,48 +79,49 @@ export default (props: FontProps) => {
   };
 
   return (
-    <Collapse 
+    <Collapse
       defaultActiveKey={['0']}
       items={[
         {
           key: '0',
           label: '背景',
           className: 'font-style-container',
-          children: <>
-            <Row
-              title={backgroundType.title}
-              dataList={backgroundType.dataList}
-              styleKey=""
-              {...props}
-              onStyleChange={onBgTypeChange}
-              value={bgType}
-            />
+          children: (
+            <>
+              <Row
+                title={backgroundType.title}
+                dataList={backgroundType.dataList}
+                styleKey=""
+                {...props}
+                onStyleChange={onBgTypeChange}
+                value={bgType}
+              />
 
-            {bgType === 'color' && (
-              <Row title={' '} styleKey="" {...props}>
-                <ColorInput
-                  styleKey={'backgroundColor'}
-                  {...props}
-                  inputWidth="100%"
-                />
-              </Row>
-            )}
+              {bgType === 'color' && (
+                <Row title={' '} styleKey="" {...props}>
+                  <ColorInput
+                    styleKey={'backgroundColor'}
+                    {...props}
+                    inputWidth="100%"
+                  />
+                </Row>
+              )}
 
-            {bgType === 'bgImg' && (
-              <Row title={' '} styleKey="" {...props}>
-                <Input
-                  addonBefore={
-                    <Icon type="icon-suffix-url" style={{ margin: 4 }} />
-                  }
-                  placeholder="输入图片url"
-                  style={{ width: '100%' }}
-                  value={backToBgImgUrl(styleData.backgroundImage)}
-                  onChange={onInputChange}
-                />
-              </Row>
-            )}
+              {bgType === 'bgImg' && (
+                <Row title={' '} styleKey="" {...props}>
+                  <Input
+                    addonBefore={
+                      <Icon type="icon-suffix-url" style={{ margin: 4 }} />
+                    }
+                    placeholder="输入图片url"
+                    style={{ width: '100%' }}
+                    value={backToBgImgUrl(styleData.backgroundImage)}
+                    onChange={onInputChange}
+                  />
+                </Row>
+              )}
 
-            {/* <Row title={"透明度"} styleKey="opacity" {...props}>
+              {/* <Row title={"透明度"} styleKey="opacity" {...props}>
               <div className="opacity-container">
                 <Range
                   style={{ marginRight: "7px" }}
@@ -138,10 +144,10 @@ export default (props: FontProps) => {
                 ></NumberPicker>
               </div>
             </Row> */}
-          </>
-        }
+            </>
+          ),
+        },
       ]}
-      >
-    </Collapse>
+    ></Collapse>
   );
 };

@@ -1,34 +1,48 @@
 import { Form, Input, Select } from 'antd';
-import React, { useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { supportVariableType, supportVariableTypeOptions } from './constants';
 import './index.less';
 import ValueFormItem from './valueFormItem';
 
 const { Option } = Select;
 
-export default function NewVarComp(props: any) {
+type VariableTypeKey = keyof typeof supportVariableType;
+
+const NewVarComp = forwardRef(function (props, ref) {
+  const [newDataType, setNewDataType] = useState<VariableTypeKey>('string');
   const [form] = Form.useForm();
-  const [newDataType, setNewDataType] = useState('string');
 
   // 外部使用，不可删除
   const clearAddNew = () => {
     setNewDataType('string');
-    form.resetFields();
   };
 
-  const getFormValues = (): Promise<{ funcName: string; funcBody: string }> => {
-    return form.validateFields();
+  const getFormValues = (): Promise<{
+    key: string;
+    type: string;
+    value: string;
+  }> => {
+    const { validateFields } = form;
+    return validateFields();
   };
 
-  const onTypeChange = (value) => {
-    const defaultValue =
-      supportVariableType[value as keyof typeof supportVariableType]?.default;
+  useImperativeHandle(ref, () => {
+    return {
+      clearAddNew,
+      getFormValues,
+    };
+  });
+
+  const onTypeChange = (value: VariableTypeKey) => {
+    const defaultValue = supportVariableType[value]?.default;
+
     form.setFieldsValue({ value: defaultValue });
     setNewDataType(value);
   };
 
   return (
     <Form
+      form={form}
       className="data-create-form"
       labelCol={{ span: 6 }}
       wrapperCol={{ span: 18 }}
@@ -38,7 +52,10 @@ export default function NewVarComp(props: any) {
         label="变量名称"
         name="key"
         rules={[
-          { required: true, message: '变量名称为必填项' },
+          {
+            required: true,
+            message: '变量名称为必填项',
+          },
           {
             pattern: /^[_a-zA-Z_$][_a-zA-Z0-9]*$/,
             message: '变量名称必须为小写字母 大写字母 _ $ 数字组合',
@@ -73,4 +90,6 @@ export default function NewVarComp(props: any) {
       </Form.Item>
     </Form>
   );
-}
+});
+
+export default NewVarComp;

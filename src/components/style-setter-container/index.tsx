@@ -11,23 +11,13 @@ import './index.less';
 interface StyleSetterProps {
   title?: any;
   name: string;
-  store: Record<string ,any>;
+  store: Record<string, any>;
 }
 
 export default observer(function StyleSetterContainer(props: StyleSetterProps) {
   const { title, name = 'style', store = {} } = props;
 
-  const onVariableBindClick = () => {
-    const { apePropsPanel } = window as any;
-    apePropsPanel.emit('variableBindDialog.openDialog', {
-      pageState: apePropsPanel.pageState,
-      onChange: onStyleChange,
-      value: store.style || {},
-    });
-  };
-
   const onStyleChange = (val: any) => {
-    const { name, store = {} } = props;
     runInAction(() => {
       if (name === 'style') {
         store[name] = val;
@@ -37,6 +27,15 @@ export default observer(function StyleSetterContainer(props: StyleSetterProps) {
         type: JS_JSON,
         value: val,
       };
+    });
+  };
+
+  const onVariableBindClick = () => {
+    const { apePropsPanel } = window as any;
+    apePropsPanel.emit('variableBindDialog.openDialog', {
+      pageState: apePropsPanel.pageState,
+      onChange: onStyleChange,
+      value: store.style || {},
     });
   };
 

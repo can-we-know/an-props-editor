@@ -14,10 +14,10 @@ interface NumberSetterProps {
 }
 
 export default function NumberSetter(props: NumberSetterProps) {
-  const onChange = (val: any) => {
+  const onValueChange = (val: any) => {
     const { onChange, units } = props;
     const value = units ? `${val}${units}` : val;
-    if (onChange) onChange(value);
+    onChange(value);
   };
 
   const numberFormatter = (value: any) => {
@@ -60,7 +60,7 @@ export default function NumberSetter(props: NumberSetterProps) {
         step={step}
         parser={numberParser}
         formatter={numberFormatter}
-        onChange={onChange}
+        onChange={onValueChange}
       />
       {units && <div className="ape-setter-number-inner">{units}</div>}
     </div>

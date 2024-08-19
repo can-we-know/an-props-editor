@@ -115,7 +115,6 @@ export function getInitialValue(initialValue: any) {
   if (initialValue && initialValue.type === LOW_CODE_FUNCTION) {
     const { value } = initialValue;
     try {
-      // eslint-disable-next-line no-new-func
       const fn = new Function(`return (${value})();`);
       return fn();
     } catch (e) {

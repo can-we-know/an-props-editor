@@ -1,7 +1,8 @@
 import VariableIcon from '@/components/variable-icon';
+import { PropsInfoType, SetterMetaItem, SetterType } from '@/types';
 import { EditOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { ElementType, useEffect, useState } from 'react';
 import {
   addVariableSetter,
   getDefaultSetter,
@@ -13,9 +14,14 @@ import NumberSetter from '../number-setter';
 import RadioGroupSetter from '../radiogroup-setter';
 import SlotSetter from '../slot-setter';
 import StringSetter from '../string-setter';
-import { SetterType } from '../type';
 
-function onVariableBindClick({ onChange, value }) {
+function onVariableBindClick({
+  onChange,
+  value,
+}: {
+  value: any;
+  onChange: (val: any) => undefined;
+}) {
   return () => {
     const { apePropsPanel } = window as any;
     apePropsPanel.emit('variableBindDialog.openDialog', {
@@ -150,58 +156,60 @@ const SetterMetaItemMap: any = {
   NumberSetter: NumberItem,
 };
 
-const MixedSetterMap = {
+const MixedSetterMap: Record<string, ElementType> = {
   StringSetter,
   SlotSetter,
   RadioGroupSetter,
   NumberSetter,
 };
 
-export function MixedItem(props: any) {
-  const { props: { initSetters = [] } = {} } = props;
-  addVariableSetter(initSetters);
-  const [state, setState] = useState({
-    setters: initSetters,
-    setterInfo: initSetters[0],
-    setterKey: '',
-    SetterNode: null,
-  });
+interface MixedItemPropsType {
+  props: {
+    setters: SetterMetaItem[];
+  };
+  value: any;
+  onChange: (val: any) => undefined;
+  defaultValue?: any;
+}
+
+function getSetterState(props: MixedItemPropsType) {
+  const { props: { setters = [] } = {}, value } = props;
+  addVariableSetter(setters);
+  const setterInfo = setters[0];
+  let setterKey =
+    typeof setterInfo === 'string' ? setterInfo : setterInfo.componentName;
+  const setter = getDefaultSetter(value, setters, true);
+  setterKey = setter?.setterKey || setterKey;
+  const SetterNode = MixedSetterMap[setterKey] || ErrorItem;
+  return {
+    setters,
+    setterKey,
+    SetterNode,
+    setterInfo: setter?.setterInfo || setterInfo,
+  };
+}
+
+export function MixedItem(props: MixedItemPropsType) {
+  const [state, setState] = useState(getSetterState(props));
 
   useEffect(() => {
-    const { setters = [], value } = props;
-    addVariableSetter(setters);
-    const setterInfo = state.setterInfo || setters[0];
-    let setterKey =
-      typeof setterInfo === 'string' ? setterInfo : setterInfo.componentName;
-    const setter = getDefaultSetter(value, setters, true);
-    setterKey = setter?.setterKey || setterKey;
-
-    if (setterKey === SetterType.VARIABLESETTER) {
-      setState((prevState) => ({
-        ...prevState,
-      }));
-    } else {
-      const SetterNode = MixedSetterMap[setterKey] || ErrorItem;
-      setState({
-        setters,
-        setterKey,
-        SetterNode,
-        setterInfo: setter?.setterInfo || setterInfo,
-      });
-    }
-  }, [props]);
+    setState(getSetterState(props));
+  }, [props.props]);
 
   const onSetterChange = (key: string) => {
     const { value, onChange } = props;
-    const { setters } = state;
-    let setterInfo;
-    setters.forEach((item) => {
-      if (item === key || item.componentName === key) {
+    const { setters = [] } = state;
+    let setterInfo: PropsInfoType['setter'] | undefined;
+    setters.forEach((item: PropsInfoType['setter']) => {
+      if (item === key || (item as SetterMetaItem).componentName === key) {
         setterInfo = item;
       }
     });
-    if (setterInfo && setterInfo.initialValue !== undefined) {
-      onChange(getInitialValue(setterInfo.initialValue));
+    if (
+      setterInfo &&
+      (setterInfo as SetterMetaItem).initialValue !== undefined
+    ) {
+      onChange(getInitialValue((setterInfo as SetterMetaItem).initialValue));
     } else {
       onChange(undefined);
     }
@@ -218,12 +226,15 @@ export function MixedItem(props: any) {
   };
 
   const { SetterNode, setterInfo, setterKey, setters } = state;
-
+  const { defaultValue, value, onChange } = props;
+  if (!SetterNode) {
+    return null;
+  }
   return (
     <>
       <SetterNode
         {...props}
-        defaultValue={setterInfo?.initialValue || defaultValue}
+        defaultValue={getInitialValue(setterInfo?.initialValue || defaultValue)}
         value={value}
         onChange={onChange}
       />

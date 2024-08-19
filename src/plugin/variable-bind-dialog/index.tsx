@@ -1,7 +1,7 @@
+import { formatObjToArr } from '@/common/format';
+import { JS_EXPRESSION } from '@/common/utils';
 import { Button, Input, Modal } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
-import { JS_EXPRESSION } from '../../component/utils';
-import { formatObjToArr } from '../../utils/format';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import BindVar from './bindVar';
 import './index.less';
 
@@ -10,55 +10,82 @@ const { Search } = Input;
 const helpText =
   '你可以通过点击左侧区域绑定变量或处理函数，当然你也可以选择新增变量进行绑定。<br>';
 
-export default function VariableBindDialog(props: any) {
-  const newVarRef = useRef(null);
+interface VariableBindStateType {
+  visiable: boolean;
+  jsCode: string;
+  searchValue: string;
+  variableListMap: Record<string, any>; // 变量列表
+  selParentVariable: string;
+  childrenVariableList: string[]; // 子级变量列表
+  emitEditorChange: (val: any) => void;
+}
 
-  const [visible, setVisible] = useState(false);
-  const [jsCode, setJsCode] = useState('');
-  const [searchValue, setSearchValue] = useState<string | null>('');
-  const [variableListMap, setVariableListMap] = useState<Record<string, any>>(
-    {},
-  );
-  const [selParentVariable, setSelParentVariable] = useState<string | null>(
-    null,
-  );
-  const [childrenVariableList, setChildrenVariableList] = useState([]);
-  const [emitEditorChange, setEmitEditorChange] = useState<(val: any) => void>(
-    () => {},
-  );
+interface NewRefType {
+  clearAddNew: () => void;
+  getFormValues: () => Promise<{ key: string; type: string; value: string }>;
+}
 
-  const openDialog = ({ pageState = {}, onChange, value }) => {
+interface OpenDialogStateType {
+  pageState: Record<string, any>;
+  onChange: (val: any) => void;
+  value: any;
+}
+
+export default function VariableBindDialog() {
+  const newVarRef = useRef<NewRefType>();
+  const [state, setState] = useState<VariableBindStateType>({
+    visiable: false,
+    jsCode: '',
+    searchValue: '',
+    variableListMap: {}, // 变量列表
+    selParentVariable: '', // 选中的父级变量
+    childrenVariableList: [], // 子级变量列表
+    emitEditorChange: () => {},
+  });
+
+  const openDialog = ({
+    pageState = {},
+    onChange,
+    value,
+  }: OpenDialogStateType) => {
     let jsCode = '';
-    // @ts-ignore
+
     if (value && JS_EXPRESSION === value.type) {
       jsCode = value.value;
     }
-    setJsCode(jsCode);
-    setEmitEditorChange(onChange);
-    setVisible(true);
 
-    const { datasource = [], handleFns = [], state = [] } = pageState as any;
-    const variableList = formatObjToArr(state);
-    setSelParentVariable('stateVariableList');
-    setChildrenVariableList(variableList);
-    setVariableListMap({
-      stateVariableList: {
-        name: 'State属性',
-        children: variableList,
+    const {
+      datasource = [],
+      handleFns = [],
+      state: curState = [],
+    } = pageState as any;
+    const variableList = formatObjToArr(curState);
+    setState((oldState) => ({
+      ...oldState,
+      visiable: true,
+      jsCode,
+      emitEditorChange: onChange,
+      selParentVariable: 'stateVariableList',
+      childrenVariableList: variableList,
+      variableListMap: {
+        stateVariableList: {
+          name: 'State属性',
+          children: variableList,
+        },
+        methods: {
+          name: '自定义处理函数',
+          children: handleFns.map((name: string) => `${name}()`),
+        },
+        dataSource: {
+          name: '数据源',
+          children: datasource,
+        },
+        newVariable: {
+          name: '新增变量',
+          children: [],
+        },
       },
-      methods: {
-        name: '自定义处理函数',
-        children: handleFns.map((name) => `${name}()`),
-      },
-      dataSource: {
-        name: '数据源',
-        children: datasource,
-      },
-      newVariable: {
-        name: '新增变量',
-        children: [],
-      },
-    });
+    }));
   };
 
   useEffect(() => {
@@ -68,17 +95,21 @@ export default function VariableBindDialog(props: any) {
     );
     return () => {
       (window as any).apePropsPanel.off(
-        'variableBindDialog.openDialog',
+        'functionBindDialog.openDialog',
         openDialog,
       );
     };
-  }, [openDialog]);
+  }, []);
 
   const closeDialog = () => {
-    setVisible(false);
+    setState((oldState) => ({
+      ...oldState,
+      visiable: false,
+    }));
   };
 
   const onOk = async () => {
+    const { emitEditorChange, jsCode } = state;
     if (newVarRef?.current) {
       const { getFormValues } = newVarRef.current as any;
       const formFileds = await getFormValues();
@@ -104,11 +135,13 @@ export default function VariableBindDialog(props: any) {
   };
 
   const removeTheBinding = () => {
+    const { emitEditorChange } = state;
     emitEditorChange(null);
     closeDialog();
   };
 
   const renderBottom = () => {
+    const { jsCode } = state;
     return (
       <div className="variable-bind-dialog-bottom">
         <div className="bottom-left-container">
@@ -129,38 +162,49 @@ export default function VariableBindDialog(props: any) {
   };
 
   const triggerSearch = (value: string) => {
-    const selectedVariable = variableListMap[selParentVariable as string];
+    const { variableListMap, selParentVariable } = state;
+    const selectedVariable = variableListMap[selParentVariable];
     if (!selectedVariable) {
       return;
     }
 
     let newChildrenVariableList = [];
-    newChildrenVariableList = selectedVariable.children.filter(
-      (item) => item.indexOf(value) > -1,
+    newChildrenVariableList = selectedVariable?.children?.filter(
+      (item: string) => item.indexOf(value) > -1,
     );
-    setChildrenVariableList(newChildrenVariableList);
+    setState((oldState) => ({
+      ...oldState,
+      childrenVariableList: newChildrenVariableList,
+    }));
   };
 
-  const onVariableSearchChange = (e) => {
+  const onVariableSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
-    setSearchValue(value);
+    setState((oldState) => ({
+      ...oldState,
+      searchValue: value,
+    }));
 
     triggerSearch(value);
   };
 
   const onVariableItemClick = (key: string) => () => {
-    setSelParentVariable(key);
-    setChildrenVariableList(variableListMap[key].children);
-    setSearchValue(null);
-
-    // @ts-ignore
+    const { variableListMap } = state;
+    setState((oldState) => ({
+      ...oldState,
+      selParentVariable: key,
+      childrenVariableList: variableListMap[key].children,
+      searchValue: '',
+    }));
     newVarRef?.current?.clearAddNew();
   };
 
   const onSelectItem = (value: string) => () => {
-    // @ts-ignore
     newVarRef?.current?.clearAddNew();
-    setJsCode(value);
+    setState((oldState) => ({
+      ...oldState,
+      jsCode: value,
+    }));
   };
 
   const renderTitle = () => {
@@ -171,15 +215,26 @@ export default function VariableBindDialog(props: any) {
     );
   };
 
-  const onCodeChange = (e) => {
+  const onCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setJsCode(value);
+    setState((oldState) => ({
+      ...oldState,
+      jsCode: value,
+    }));
   };
 
+  const {
+    visiable,
+    variableListMap,
+    selParentVariable,
+    childrenVariableList,
+    jsCode,
+    searchValue,
+  } = state;
   return (
     <Modal
       width={770}
-      open={visible}
+      open={visiable}
       title={renderTitle()}
       onCancel={closeDialog}
       footer={renderBottom()}
@@ -205,7 +260,7 @@ export default function VariableBindDialog(props: any) {
               <div className="search-control">
                 <Search
                   placeholder="搜索"
-                  value={searchValue as string}
+                  value={searchValue}
                   style={{ width: '100%' }}
                   onChange={onVariableSearchChange}
                 />
@@ -238,9 +293,7 @@ export default function VariableBindDialog(props: any) {
               </div>
             </div>
           )}
-          {selParentVariable === 'newVariable' && (
-            <BindVar varName={jsCode} wrappedComponentRef={newVarRef} />
-          )}
+          {selParentVariable === 'newVariable' && <BindVar ref={newVarRef} />}
         </div>
       </div>
     </Modal>
